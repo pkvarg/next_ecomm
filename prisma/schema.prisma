@@ -8,11 +8,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// datasource db {
-//   provider = "postgresql"
-//   url      = "postgresql://peter:petoPostgres*4556@141.144.227.131:5432/next_ecomm"
-// }
-
 datasource db {
   provider = "postgresql"
   url =  env("DATABASE_URL")
