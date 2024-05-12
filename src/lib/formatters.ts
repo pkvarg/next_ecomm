@@ -1,4 +1,4 @@
-const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
+const CURRENCY_FORMATTER = new Intl.NumberFormat('sk-SK', {
   currency: 'EUR',
   style: 'currency',
   minimumFractionDigits: 0,

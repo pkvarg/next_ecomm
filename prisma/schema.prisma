@@ -15,9 +15,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://peter:petoPostgres*4556@141.144.227.131:5432/next_ecomm"
-  shadowDatabaseUrl = "postgresql://peter:petoPostgres*4556@141.144.227.131:5432/next_shadow"
-  //shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  url =  env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 
