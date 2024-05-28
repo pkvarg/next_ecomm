@@ -8,11 +8,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 const resend = new Resend(process.env.RESEND_API_KEY as string)
 
 export async function POST(req: NextRequest) {
+  console.log('test')
   const event = await stripe.webhooks.constructEvent(
     await req.text(),
     req.headers.get('stripe-signature') as string,
     process.env.STRIPE_WEBHOOK_SECRET as string
   )
+
+  console.log('evet', event)
 
   if (event.type === 'charge.succeeded') {
     const charge = event.data.object
@@ -29,6 +32,7 @@ export async function POST(req: NextRequest) {
       email,
       orders: { create: { productId, pricePaidInCents } },
     }
+
     const {
       orders: [order],
     } = await db.user.upsert({
