@@ -49,18 +49,22 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    await resend.emails.send({
-      from: `Support <${process.env.SENDER_EMAIL}>`,
-      to: email,
-      subject: 'Order Confirmation',
-      react: (
-        <PurchaseReceiptEmail
-          order={order}
-          product={product}
-          downloadVerificationId={downloadVerification.id}
-        />
-      ),
-    })
+    try {
+      await resend.emails.send({
+        from: `Support <${process.env.SENDER_EMAIL}>`,
+        to: email,
+        subject: 'Order Confirmation',
+        react: (
+          <PurchaseReceiptEmail
+            order={order}
+            product={product}
+            downloadVerificationId={downloadVerification.id}
+          />
+        ),
+      })
+    } catch (error) {
+      console.log('resend error', error)
+    }
   }
 
   return new NextResponse()
