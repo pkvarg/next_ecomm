@@ -15,8 +15,6 @@ export async function POST(req: NextRequest) {
     process.env.STRIPE_WEBHOOK_SECRET as string
   )
 
-  console.log('evet', event)
-
   if (event.type === 'charge.succeeded') {
     const charge = event.data.object
     const productId = charge.metadata.productId
