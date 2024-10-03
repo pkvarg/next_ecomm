@@ -4,11 +4,32 @@ import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ComponentProps, ReactNode } from 'react'
+import { userStore } from '@/store/user'
 
 export function Nav({ children }: { children: ReactNode }) {
+  const user = userStore((state: any) => state.user)
+  const updateUser = userStore((state: any) => state.updateUser)
+
+  // upon state change call some function
+  const sub = userStore.subscribe(() => {
+    // trigger some function
+  })
+
+  sub()
+
   return (
     <nav className='bg-primary text-primary-foreground flex justify-center px-4'>
       {children}
+      <p className='ml-auto '>{user.full_name}</p>
+      <input
+        className='border ml-2 h-[40px] text-black'
+        type='text'
+        onChange={(e: any) => {
+          updateUser({
+            full_name: e.target.value,
+          })
+        }}
+      />
     </nav>
   )
 }
