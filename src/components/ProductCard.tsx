@@ -1,3 +1,4 @@
+'use client'
 import { formatCurrency } from '@/lib/formatters'
 import {
   Card,
@@ -10,6 +11,7 @@ import {
 import { Button } from './ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
+import { cartStore } from '../store/cart'
 
 type ProductCardProps = {
   id: string
@@ -26,6 +28,12 @@ export function ProductCard({
   description,
   imagePath,
 }: ProductCardProps) {
+  const updateCart = cartStore((state: any) => state.updateCart)
+
+  const addItemToCart = () => {
+    const newItem = { id, name, priceInCents, imagePath } // Define the new item to add
+    updateCart(newItem) // Pass the newItem to the updateCart function
+  }
   return (
     <Card className='flex overflow-hidden flex-col'>
       <div className='relative w-full h-auto aspect-video'>
@@ -39,8 +47,9 @@ export function ProductCard({
         <p className='line-clamp-4'>{description}</p>
       </CardContent>
       <CardFooter>
-        <Button asChild size='lg' className='w-full'>
-          <Link href={`/products/${id}/purchase`}>Purchase</Link>
+        <Button asChild size='lg' className='w-full' onClick={addItemToCart}>
+          {/* <Link href={`/products/${id}/purchase`}>Purchase</Link> */}
+          <p>Add to Cart</p>
         </Button>
       </CardFooter>
     </Card>
