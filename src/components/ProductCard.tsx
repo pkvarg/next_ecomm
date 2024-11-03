@@ -15,6 +15,8 @@ import { cartStore } from '../store/cart'
 import ProdCount from './ProdCount'
 import useCartStore from '@/store/cartStore'
 import { Product } from '@prisma/client'
+import useCountStore from '@/store/counterStore'
+import { useState } from 'react'
 
 type ProductCardProps = {
   id: string
@@ -27,7 +29,20 @@ type ProductCardProps = {
 interface ProductTypes extends Product {}
 
 export function ProductCard(product: ProductTypes) {
-  const updateCart = cartStore((state: any) => state.updateCart)
+  const { addToCart, updateItemQty } = useCartStore((state) => state)
+  const [count, setCount] = useState(1)
+
+  const increment = () => {
+    setCount((prev) => prev + 1)
+    updateItemQty(product.id, count)
+  }
+
+  const decrement = () => {
+    setCount((prev) => prev - 1)
+    updateItemQty(product.id, count)
+  }
+
+  //const updateCart = cartStore((state: any) => state.updateCart)
 
   // const addItemToCart = () => {
   //   const newItem = { id, name, priceInCents, imagePath } // Define the new item to add
@@ -35,7 +50,7 @@ export function ProductCard(product: ProductTypes) {
   // }
 
   // new store
-  const addToCart = useCartStore((state) => state.addToCart)
+  //const { count, increment, decrement, reset } = useCountStore((state) => state)
 
   return (
     <Card className='flex overflow-hidden flex-col'>
@@ -50,7 +65,26 @@ export function ProductCard(product: ProductTypes) {
       </CardHeader>
       <CardContent className='flex-grow'>
         <p className='line-clamp-4'>{product.description}</p>
-        <ProdCount />
+        {/* <ProdCount /> */}
+        <div className='flex gap-4 text-[20px]'>
+          <p onClick={decrement} className='cursor-pointer'>
+            -
+          </p>
+          <h1>{count}</h1>
+
+          <p onClick={increment} className='cursor-pointer'>
+            +
+          </p>
+          {/* <p onClick={decrement} className='cursor-pointer'>
+            -
+          </p>
+          <h1>{count}</h1>
+
+          <p onClick={increment} className='cursor-pointer'>
+            +
+          </p> */}
+          {/* <p onClick={reset} className='cursor-pointer'>Reset</p> */}
+        </div>
       </CardContent>
 
       <CardFooter>
@@ -58,7 +92,7 @@ export function ProductCard(product: ProductTypes) {
           asChild
           size='lg'
           className='w-full'
-          onClick={() => addToCart(product)}
+          onClick={() => addToCart(product, count)}
         >
           {/* <Link href={`/products/${id}/purchase`}>Purchase</Link> */}
           <p>Add to Cart</p>
