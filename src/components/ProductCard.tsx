@@ -13,6 +13,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { cartStore } from '../store/cart'
 import ProdCount from './ProdCount'
+import useCartStore from '@/store/cartStore'
+import { Product } from '@prisma/client'
 
 type ProductCardProps = {
   id: string
@@ -22,35 +24,42 @@ type ProductCardProps = {
   imagePath: string
 }
 
-export function ProductCard({
-  id,
-  name,
-  priceInCents,
-  description,
-  imagePath,
-}: ProductCardProps) {
+interface ProductTypes extends Product {}
+
+export function ProductCard(product: ProductTypes) {
   const updateCart = cartStore((state: any) => state.updateCart)
 
-  const addItemToCart = () => {
-    const newItem = { id, name, priceInCents, imagePath } // Define the new item to add
-    updateCart(newItem) // Pass the newItem to the updateCart function
-  }
+  // const addItemToCart = () => {
+  //   const newItem = { id, name, priceInCents, imagePath } // Define the new item to add
+  //   updateCart(newItem) // Pass the newItem to the updateCart function
+  // }
+
+  // new store
+  const addToCart = useCartStore((state) => state.addToCart)
+
   return (
     <Card className='flex overflow-hidden flex-col'>
       <div className='relative w-full h-auto aspect-video'>
-        <Image src={imagePath} fill alt={name} />
+        <Image src={product.imagePath} fill alt={product.name} />
       </div>
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
-        <CardDescription>{formatCurrency(priceInCents / 100)}</CardDescription>
+        <CardTitle>{product.name}</CardTitle>
+        <CardDescription>
+          {formatCurrency(product.priceInCents / 100)}
+        </CardDescription>
       </CardHeader>
       <CardContent className='flex-grow'>
-        <p className='line-clamp-4'>{description}</p>
+        <p className='line-clamp-4'>{product.description}</p>
         <ProdCount />
       </CardContent>
 
       <CardFooter>
-        <Button asChild size='lg' className='w-full' onClick={addItemToCart}>
+        <Button
+          asChild
+          size='lg'
+          className='w-full'
+          onClick={() => addToCart(product)}
+        >
           {/* <Link href={`/products/${id}/purchase`}>Purchase</Link> */}
           <p>Add to Cart</p>
         </Button>
