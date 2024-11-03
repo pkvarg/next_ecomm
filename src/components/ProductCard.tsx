@@ -12,6 +12,7 @@ import { Button } from './ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
 import { cartStore } from '../store/cart'
+import ProdCount from './ProdCount'
 
 type ProductCardProps = {
   id: string
@@ -45,7 +46,9 @@ export function ProductCard({
       </CardHeader>
       <CardContent className='flex-grow'>
         <p className='line-clamp-4'>{description}</p>
+        <ProdCount />
       </CardContent>
+
       <CardFooter>
         <Button asChild size='lg' className='w-full' onClick={addItemToCart}>
           {/* <Link href={`/products/${id}/purchase`}>Purchase</Link> */}
