@@ -12,14 +12,6 @@ interface CartState {
   updateItemQty: (productId: string, qty: number) => void
 }
 
-// const useCartStore = create<CartState>((set, get) => ({
-//   items: [],
-//   addToCart: (product) =>
-//     set({
-//       items: [...get().items],
-//     }),
-// }))
-
 const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({

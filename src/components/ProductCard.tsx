@@ -11,11 +11,9 @@ import {
 import { Button } from './ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
-import { cartStore } from '../store/cart'
-import ProdCount from './ProdCount'
 import useCartStore from '@/store/cartStore'
 import { Product } from '@prisma/client'
-import useCountStore from '@/store/counterStore'
+
 import { useState } from 'react'
 
 type ProductCardProps = {
@@ -42,16 +40,6 @@ export function ProductCard(product: ProductTypes) {
     updateItemQty(product.id, count)
   }
 
-  //const updateCart = cartStore((state: any) => state.updateCart)
-
-  // const addItemToCart = () => {
-  //   const newItem = { id, name, priceInCents, imagePath } // Define the new item to add
-  //   updateCart(newItem) // Pass the newItem to the updateCart function
-  // }
-
-  // new store
-  //const { count, increment, decrement, reset } = useCountStore((state) => state)
-
   return (
     <Card className='flex overflow-hidden flex-col'>
       <div className='relative w-full h-auto aspect-video'>
@@ -65,7 +53,7 @@ export function ProductCard(product: ProductTypes) {
       </CardHeader>
       <CardContent className='flex-grow'>
         <p className='line-clamp-4'>{product.description}</p>
-        {/* <ProdCount /> */}
+
         <div className='flex gap-4 text-[20px]'>
           <p onClick={decrement} className='cursor-pointer'>
             -
@@ -75,15 +63,6 @@ export function ProductCard(product: ProductTypes) {
           <p onClick={increment} className='cursor-pointer'>
             +
           </p>
-          {/* <p onClick={decrement} className='cursor-pointer'>
-            -
-          </p>
-          <h1>{count}</h1>
-
-          <p onClick={increment} className='cursor-pointer'>
-            +
-          </p> */}
-          {/* <p onClick={reset} className='cursor-pointer'>Reset</p> */}
         </div>
       </CardContent>
 
