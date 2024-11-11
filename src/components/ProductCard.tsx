@@ -36,8 +36,10 @@ export function ProductCard(product: ProductTypes) {
   }
 
   const decrement = () => {
-    setCount((prev) => prev - 1)
-    updateItemQty(product.id, count)
+    if (count > 0) {
+      setCount((prev) => prev - 1)
+      updateItemQty(product.id, count)
+    } else setCount(0)
   }
 
   return (
@@ -52,9 +54,9 @@ export function ProductCard(product: ProductTypes) {
         </CardDescription>
       </CardHeader>
       <CardContent className='flex-grow'>
-        <p className='line-clamp-4'>{product.description}</p>
+        <p className='line-clamp-4 text-left'>{product.description}</p>
 
-        <div className='flex gap-4 text-[20px]'>
+        <div className='flex gap-4 flex-row justify-end mr-8'>
           <p onClick={decrement} className='cursor-pointer'>
             -
           </p>

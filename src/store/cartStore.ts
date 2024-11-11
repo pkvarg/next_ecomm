@@ -10,6 +10,7 @@ interface CartState {
   items: CartItem[]
   addToCart: (product: Product, qty: number) => void
   updateItemQty: (productId: string, qty: number) => void
+  removeFromCart: (productId: string) => void
 }
 
 const useCartStore = create<CartState>()(
@@ -48,6 +49,13 @@ const useCartStore = create<CartState>()(
         const updatedItems = items.map((item) =>
           item.id === productId ? { ...item, qty } : item
         )
+
+        set({ items: updatedItems })
+      },
+      // Function to remove an item from the cart by its product ID
+      removeFromCart: (productId: string) => {
+        const { items } = get()
+        const updatedItems = items.filter((item) => item.id !== productId)
 
         set({ items: updatedItems })
       },

@@ -12,58 +12,75 @@ import {
 import { Button } from '@react-email/components'
 import { formatCurrency } from '@/lib/formatters'
 import Image from 'next/image'
+import { Nav, NavLink } from '@/components/Nav'
 
 const Cart = () => {
-  const { items, addToCart, updateItemQty } = useCartStore((state) => state)
-  const [count, setCount] = useState(1)
+  const { items, updateItemQty, removeFromCart } = useCartStore(
+    (state) => state
+  )
+  //const [count, setCount] = useState(1)
+  // Thrash delete from cart
 
-  const increment = () => {
-    setCount((prev) => prev + 1)
-    //updateItemQty(product.id, count)
+  const increment = (id: string, qty: number) => {
+    updateItemQty(id, qty + 1)
   }
 
-  const decrement = () => {
-    setCount((prev) => prev - 1)
-    //updateItemQty(product.id, count)
+  const decrement = (id: string, qty: number) => {
+    if (qty > 1) {
+      updateItemQty(id, qty - 1)
+    } else updateItemQty(id, 1)
   }
 
   console.log('items cart', items)
 
   return (
     <div>
-      <h1>Cart</h1>
+      <Nav>
+        <NavLink href='/'>Home</NavLink>
+        <NavLink href='/products'>Products</NavLink>
+        <NavLink href='/orders'>My Orders</NavLink>
+      </Nav>
+      <h1 className='text-center my-4 text-[32px]'>Your Cart</h1>
       {items.map((item) => (
-        <Card key={item.id} className='flex overflow-hidden flex-col'>
-          <div className='relative w-full h-auto aspect-video'>
+        <div key={item.id} className='flex overflow-hidden flex-row my-8'>
+          <div className='relative m-2'>
             <Image
               src={item.imagePath}
-              width={150}
-              height={150}
+              width={50}
+              height={50}
               alt={item.name}
               priority
             />
           </div>
-          <CardHeader>
+
+          <div className='flex flex-col'>
             <CardTitle>{item.name}</CardTitle>
             <CardDescription>
+              <p className='line-clamp-4'>{item.description}</p>
+
               {formatCurrency(item.priceInCents / 100)}
             </CardDescription>
-          </CardHeader>
-          <CardContent className='flex-grow'>
-            <p className='line-clamp-4'>{item.description}</p>
-
-            <div className='flex gap-4 text-[20px]'>
-              <p onClick={decrement} className='cursor-pointer'>
+            <div className='flex gap-4 ml-auto -mt-4'>
+              <p
+                onClick={() => decrement(item.id, item.qty)}
+                className='cursor-pointer'
+              >
                 -
               </p>
-              <h1>{count}</h1>
+              <h1>{item.qty}</h1>
 
-              <p onClick={increment} className='cursor-pointer'>
+              <p
+                onClick={() => increment(item.id, item.qty)}
+                className='cursor-pointer'
+              >
                 +
               </p>
+              <p onClick={() => removeFromCart(item.id)} className='bg-red-600'>
+                Delete
+              </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ))}
     </div>
   )
