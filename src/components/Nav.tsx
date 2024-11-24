@@ -26,18 +26,13 @@ export function Nav({ children }: { children: ReactNode }) {
   console.log('items', items)
 
   return (
-    <nav className='bg-primary text-primary-foreground flex justify-center px-4 py-3'>
+    <nav className="bg-primary text-primary-foreground flex justify-center px-4 py-3">
       <div>{children}</div>
 
-      <div
-        onClick={goToCart}
-        className='flex flex-row mt-auto ml-auto relative cursor-pointer'
-      >
-        <IoCartOutline className='text-[25px]' />
-        <p className='text-white absolute left-[15px] -top-[5px]'>
-          <span className='px-[2px] bg-red-600 rounded-2xl'>
-            {items.length}
-          </span>
+      <div onClick={goToCart} className="flex flex-row mt-auto ml-auto relative cursor-pointer">
+        <IoCartOutline className="text-[25px]" />
+        <p className="text-white absolute left-[12.5px] -top-[5px]">
+          <span className="px-[5px] bg-red-600 rounded-2xl">{items.length}</span>
         </p>
         {/* <p>{user.full_name}</p> */}
 
@@ -62,7 +57,7 @@ export function NavLink(props: Omit<ComponentProps<typeof Link>, 'className'>) {
       {...props}
       className={cn(
         'p-4 hover:bg-secondary hover:text-secondary-foreground focus-visible:bg-secondary focus-visible:text-secondary-foreground',
-        pathname === props.href && 'bg-background text-foreground'
+        pathname === props.href && 'bg-background text-foreground',
       )}
     />
   )
