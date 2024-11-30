@@ -14,6 +14,11 @@ const Cart = () => {
   const goToHome = () => {
     router.push('/') // Navigate to the home page
   }
+
+  const goToShipping = () => {
+    router.push('/shipping') // Navigate to the home page
+  }
+
   const { items, updateItemQty, removeFromCart } = useCartStore((state) => state)
 
   const increment = (id: string, qty: number) => {
@@ -108,7 +113,10 @@ const Cart = () => {
             <p className="font-bold mt-2">Postage: {totalItemsQty && postage}&#8364;</p>
             <p className="font-bold mt-2">Tax: {totalItemsQty && tax}%</p>
             <p className="font-bold mt-2">Total: {totalItemsQty && totalWithTax}&#8364;</p>
-            <button className="bg-gray-500 text-gray-50 p-2 mt-2 w-full cursor-pointer hover:bg-gray-700">
+            <button
+              onClick={goToShipping}
+              className="bg-gray-500 text-gray-50 p-2 mt-2 w-full cursor-pointer hover:bg-gray-700"
+            >
               Go to Checkout
             </button>
             <button
