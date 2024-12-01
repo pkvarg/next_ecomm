@@ -23,8 +23,6 @@ export function Nav({ children }: { children: ReactNode }) {
     router.push('/cart')
   }
 
-  console.log('items', items)
-
   return (
     <nav className="bg-primary text-primary-foreground flex justify-center px-4 py-3">
       <div>{children}</div>

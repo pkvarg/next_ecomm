@@ -3,19 +3,24 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import GoBack from '@/components/GoBack'
 import { useForm, SubmitHandler } from 'react-hook-form'
+import useShippingStore from '@/store/shippingStore'
 
 const ShippingPage = () => {
   // TODO react form
   const router = useRouter()
+  const { shippingInfo, setShippingInfo } = useShippingStore()
+  const { register, handleSubmit, watch, reset } = useForm()
 
-  const { register, handleSubmit, watch } = useForm()
+  const isBillingAddress = watch('is_billing_address', shippingInfo.is_billing_address)
+  const isIcoDic = watch('is_ico_dic', shippingInfo.is_ico_dic)
 
-  const isBillingAddress = watch('is_billing_address', false) // Default to false
-  const isIcoDic = watch('is_ico_dic', false) // Default to false
-
-  const onSubmit = (data: any) => {
-    console.log('submitted payment info', data)
+  const onSubmit = (data: object) => {
+    setShippingInfo(data)
   }
+
+  React.useEffect(() => {
+    reset(shippingInfo)
+  }, [shippingInfo, reset])
 
   return (
     <div>
@@ -24,13 +29,54 @@ const ShippingPage = () => {
         <h1 className="text-center my-4 text-[32px]">Shipping</h1>
         <h2 className="text-[24px] my-4 text-center">Delivery Address: </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 w-fit">
-          <input {...register('name')} placeholder="Name" className="border pl-1" />
-          <input {...register('address')} placeholder="Address" className="border pl-1" />
-          <input {...register('city')} placeholder="City" className="border pl-1" />
-          <input {...register('zip')} placeholder="ZIP Code" className="border pl-1" />
-          <input {...register('country')} placeholder="Country" className="border pl-1" />
-          <input {...register('phone')} placeholder="Phone" className="border pl-1" />
-          <input {...register('note')} placeholder="Note" className="border pl-1" />
+          <input
+            {...register('name')}
+            placeholder="Name"
+            defaultValue={shippingInfo.name}
+            required
+            className="border pl-1"
+          />
+          <input
+            {...register('address')}
+            placeholder="Address"
+            defaultValue={shippingInfo.address}
+            required
+            className="border pl-1"
+          />
+          <input
+            {...register('city')}
+            placeholder="City"
+            defaultValue={shippingInfo.city}
+            required
+            className="border pl-1"
+          />
+          <input
+            {...register('zip')}
+            placeholder="ZIP Code"
+            defaultValue={shippingInfo.zip}
+            required
+            className="border pl-1"
+          />
+          <input
+            {...register('country')}
+            placeholder="Country"
+            defaultValue={shippingInfo.country}
+            required
+            className="border pl-1"
+          />
+          <input
+            {...register('phone')}
+            placeholder="Phone"
+            defaultValue={shippingInfo.phone}
+            required
+            className="border pl-1"
+          />
+          <input
+            {...register('note')}
+            placeholder="Note"
+            defaultValue={shippingInfo.note}
+            className="border pl-1"
+          />
           <div className="flex flex-row gap-2 my-4">
             <input type="checkbox" {...register('is_billing_address')} className="w-[20px]" />
             Billing Address is different from Delivery Address
@@ -41,18 +87,26 @@ const ShippingPage = () => {
               <input
                 {...register('billing_name')}
                 placeholder="Name / Company"
+                defaultValue={shippingInfo.billing_name}
                 className="border pl-1"
               />
               <input
                 {...register('billing_address')}
                 placeholder="Address"
+                defaultValue={shippingInfo.billing_address}
                 className="border pl-1"
               />
-              <input {...register('billing_city')} placeholder="City" className="border pl-1" />
+              <input
+                {...register('billing_city')}
+                placeholder="City"
+                defaultValue={shippingInfo.billing_city}
+                className="border pl-1"
+              />
               <input {...register('billing_zip')} placeholder="ZIP Code" className="border pl-1" />
               <input
                 {...register('billing_country')}
                 placeholder="Country"
+                defaultValue={shippingInfo.billing_country}
                 className="border pl-1"
               />
 
@@ -62,11 +116,22 @@ const ShippingPage = () => {
               </div>
               {isIcoDic && (
                 <>
-                  <input {...register('billing_ico')} placeholder="IČO" className="border pl-1" />
-                  <input {...register('billing_dic')} placeholder="DIČ" className="border pl-1" />
+                  <input
+                    {...register('billing_ico')}
+                    placeholder="IČO"
+                    defaultValue={shippingInfo.billing_ico}
+                    className="border pl-1"
+                  />
+                  <input
+                    {...register('billing_dic')}
+                    placeholder="DIČ"
+                    defaultValue={shippingInfo.billing_dic}
+                    className="border pl-1"
+                  />
                   <input
                     {...register('billing_ico_dph')}
                     placeholder="IČ DPH"
+                    defaultValue={shippingInfo.billing_ico_dph}
                     className="border pl-1"
                   />
                 </>
@@ -76,19 +141,12 @@ const ShippingPage = () => {
 
           <button
             type="submit"
-            //onClick={() => router.push('/payment-type')}
+            onClick={() => router.push('/payment-type')}
             className="bg-blue-500 text-gray-50 p-2 w-fit cursor-pointer hover:bg-blue-800 mt-8 ml-auto"
           >
             Continue to Payment Info &#8594;
           </button>
-          {/* <button type="submit" className=''>Submit</button> */}
         </form>
-        {/* <button
-        onClick={() => router.push('/payment-type')}
-        className="bg-blue-500 text-gray-50 p-2 w-fit cursor-pointer hover:bg-blue-800 mt-8"
-      >
-        Continue to Payment Info
-      </button> */}
       </div>
     </div>
   )
