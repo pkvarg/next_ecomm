@@ -2,11 +2,10 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import GoBack from '@/components/GoBack'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import useShippingStore from '@/store/shippingStore'
 
-const ShippingPage = () => {
-  // TODO react form
+const ShippingPage = () => {  
   const router = useRouter()
   const { shippingInfo, setShippingInfo } = useShippingStore()
   const { register, handleSubmit, watch, reset } = useForm()

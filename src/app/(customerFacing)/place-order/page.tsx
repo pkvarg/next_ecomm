@@ -5,18 +5,25 @@ import { formatCurrency } from '@/lib/formatters'
 import useCartStore from '@/store/cartStore'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
+import useShippingStore from '@/store/shippingStore'
 
 const PlaceOrder = () => {
   // TODO agree Tick form
 
   const router = useRouter()
 
-  const placeOrder = () => {
+  const [agreeGdpr, setAgreeGdpr] = useState(true)
+  const [agreeTerms, setAgreeTerms] = useState(true)
+  const [agreeNewsletter, setAgreeNewsletter] = useState(true)
+
+  const placeOrder = (e: any) => {
+    e.preventDefault()
     // ...logic
   }
 
   const { items } = useCartStore((state) => state)
+  const { shippingInfo } = useShippingStore()
 
   function roundUpToNearestTenth(price: number) {
     return Math.ceil(price * 10) / 10
@@ -37,15 +44,55 @@ const PlaceOrder = () => {
     <div>
       <GoBack />
 
-      <h1 className="text-center my-4 text-[32px]">PlaceOrder</h1>
+      <h1 className="text-center my-4 text-[32px]">Place Order</h1>
       <div className="flex flex-col lg:flex-row gap-4 mx-4 lg:mx-[10%]">
         <div className="flex flex-col lg:w-[65%]">
-          <h1>Delivery Info</h1>
+          <h1 className="font-bold">Delivery Info: </h1>
+          <p>
+            {shippingInfo.name}
+            {', '}
+            {shippingInfo.address}
+            {', '}
+            {shippingInfo.city}
+            {', '}
+            {shippingInfo.country}
+            {', '}
+            {shippingInfo.zip}
+          </p>
+          {shippingInfo.note && <h2>Note: {shippingInfo.note}</h2>}
+
+          {shippingInfo.is_billing_address && (
+            <>
+              <h1 className="font-bold">Billing Info: </h1>
+              <p>
+                {shippingInfo.billing_name}
+                {', '}
+                {shippingInfo.billing_address}
+                {', '}
+                {shippingInfo.billing_city}
+                {', '}
+                {shippingInfo.billing_country}
+                {', '}
+                {shippingInfo.billing_zip}
+              </p>
+              {shippingInfo.is_ico_dic && (
+                <>
+                  <p>IČO: {shippingInfo.billing_ico}</p>
+                  <p>DIČ: {shippingInfo.billing_dic}</p>
+                  <p>IČ DPH: {shippingInfo.billing_ico_dph}</p>
+                </>
+              )}
+            </>
+          )}
+
           <div className="h-[1px] bg-gray-400 w-full my-2"></div>
-          <h2>Payment Type</h2>
+          <h2 className="font-bold">
+            Payment Type:
+            <span className="capitalize font-normal"> {shippingInfo.payment_type}</span>
+          </h2>
           <div className="h-[1px] bg-gray-400 w-full my-2"></div>
-          <h3>Your Products</h3>
-          <div className="h-[1px] bg-gray-400 w-full my-2"></div>
+          <h3 className="font-bold">Your Products: </h3>
+
           {items.map((item) => (
             <div key={item.id} className="flex overflow-hidden flex-row my-8">
               <div className="relative m-2">
@@ -79,19 +126,52 @@ const PlaceOrder = () => {
             <p className="font-bold mt-2">Tax: {totalItemsQty && tax}%</p>
             <p className="font-bold mt-2">Total: {totalItemsQty && totalWithTax}&#8364;</p>
             <div className="h-[1px] bg-gray-400 w-full my-2"></div>
-            <p onClick={() => router.push('/terms')} className="mt-2 text-[15px]">
-              I agree with <span className="underline cursor-pointer">Terms and Conditions</span>
-            </p>
-            <p onClick={() => router.push('/gdpr')} className="mt-2 text-[15px]">
-              I agrees with <span className="underline cursor-pointer">GDPR</span>
-            </p>
 
-            <button
-              onClick={placeOrder}
-              className="bg-blue-500 text-gray-50 p-2 mt-2 w-full cursor-pointer hover:bg-blue-800"
-            >
-              Place Order
-            </button>
+            <form onSubmit={placeOrder}>
+              <div className="flex flex-row gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  checked={agreeTerms} // Controlled by state
+                  onChange={() => setAgreeTerms((prev) => !prev)}
+                  className="w-[20px]"
+                  required
+                />
+                I agree with{' '}
+                <span onClick={() => router.push('/terms')} className="underline cursor-pointer">
+                  Terms and Conditions
+                </span>
+              </div>
+
+              <div className="flex flex-row gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  checked={agreeGdpr} // Controlled by state
+                  onChange={() => setAgreeGdpr((prev) => !prev)}
+                  className="w-[20px]"
+                  required
+                />
+                I agree with{' '}
+                <span onClick={() => router.push('/gdpr')} className="underline cursor-pointer">
+                  GDPR
+                </span>
+              </div>
+
+              <div className="flex flex-row gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  checked={agreeNewsletter} // Controlled by state
+                  onChange={() => setAgreeNewsletter((prev) => !prev)}
+                  className="w-[20px]"
+                />
+                I subscribe to Newsletter
+              </div>
+              <button
+                type="submit"
+                className="bg-blue-500 text-gray-50 p-2 mt-2 w-full cursor-pointer hover:bg-blue-800"
+              >
+                Place Order
+              </button>
+            </form>
           </div>
         </div>
       </div>

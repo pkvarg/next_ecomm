@@ -22,6 +22,9 @@ interface ShippingInfo {
   billing_dic: string
   billing_ico_dph: string
   is_ico_dic: boolean
+  payment_type: string
+  cash: boolean
+  stripe: boolean
 }
 
 // Define the Zustand store's state and actions
@@ -53,11 +56,28 @@ const useShippingStore = create<ShippingStore>()(
         billing_dic: '',
         billing_ico_dph: '',
         is_ico_dic: false,
+        payment_type: '',
+        cash: false,
+        stripe: false,
       },
       setShippingInfo: (newInfo) =>
-        set((state) => ({
-          shippingInfo: { ...state.shippingInfo, ...newInfo },
-        })),
+        // set((state) => ({
+        //   shippingInfo: { ...state.shippingInfo, ...newInfo },
+        // })),
+        set((state) => {
+          // Determine payment_type based on newInfo.cash or newInfo.stripe
+          let paymentType = state.shippingInfo.payment_type // Preserve the current value by default
+          if (newInfo.cash) paymentType = 'cash'
+          if (newInfo.stripe) paymentType = 'stripe'
+
+          return {
+            shippingInfo: {
+              ...state.shippingInfo,
+              ...newInfo,
+              payment_type: paymentType, // Override with determined value
+            },
+          }
+        }),
       resetShippingInfo: () =>
         set(() => ({
           shippingInfo: {
@@ -78,13 +98,15 @@ const useShippingStore = create<ShippingStore>()(
             billing_dic: '',
             billing_ico_dph: '',
             is_ico_dic: false,
+            payment_type: '',
+            cash: false,
+            stripe: false,
           },
         })),
     }),
     {
       name: 'shipping-storage', // Key in localStorage
       storage: createJSONStorage(() => sessionStorage),
-      // partialize: (state) => ({ shippingInfo: state.shippingInfo }), // Save only shippingInfo
     },
   ),
 )
