@@ -8,9 +8,17 @@ import { z } from 'zod'
 const emailSchema = z.string().email()
 const resend = new Resend(process.env.RESEND_API_KEY as string)
 
+export async function createNewOrder() {
+  // const order = await db.order.create({
+  //   //
+  // })
+
+  return //
+}
+
 export async function emailOrderHistory(
   prevState: unknown,
-  formData: FormData
+  formData: FormData,
 ): Promise<{ message?: string; error?: string }> {
   const result = emailSchema.safeParse(formData.get('email'))
 
@@ -42,8 +50,7 @@ export async function emailOrderHistory(
 
   if (user == null) {
     return {
-      message:
-        'Check your email to view your order history and download your products.',
+      message: 'Check your email to view your order history and download your products.',
     }
   }
 
@@ -73,7 +80,6 @@ export async function emailOrderHistory(
   }
 
   return {
-    message:
-      'Check your email to view your order history and download your products.',
+    message: 'Check your email to view your order history and download your products.',
   }
 }

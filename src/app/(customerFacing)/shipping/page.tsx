@@ -5,7 +5,7 @@ import GoBack from '@/components/GoBack'
 import { useForm } from 'react-hook-form'
 import useShippingStore from '@/store/shippingStore'
 
-const ShippingPage = () => {  
+const ShippingPage = () => {
   const router = useRouter()
   const { shippingInfo, setShippingInfo } = useShippingStore()
   const { register, handleSubmit, watch, reset } = useForm()
@@ -36,9 +36,16 @@ const ShippingPage = () => {
             className="border pl-1"
           />
           <input
-            {...register('address')}
-            placeholder="Address"
-            defaultValue={shippingInfo.address}
+            {...register('street')}
+            placeholder="Street"
+            defaultValue={shippingInfo.street}
+            required
+            className="border pl-1"
+          />
+          <input
+            {...register('house_number')}
+            placeholder="House Number"
+            defaultValue={shippingInfo.house_number}
             required
             className="border pl-1"
           />
@@ -90,11 +97,25 @@ const ShippingPage = () => {
                 className="border pl-1"
               />
               <input
+                {...register('billing_street')}
+                placeholder="Billing Street"
+                defaultValue={shippingInfo.billing_street}
+                required
+                className="border pl-1"
+              />
+              <input
+                {...register('billing_house_number')}
+                placeholder="Billing House Number"
+                defaultValue={shippingInfo.billing_house_number}
+                required
+                className="border pl-1"
+              />
+              {/* <input
                 {...register('billing_address')}
                 placeholder="Address"
                 defaultValue={shippingInfo.billing_address}
                 className="border pl-1"
-              />
+              /> */}
               <input
                 {...register('billing_city')}
                 placeholder="City"

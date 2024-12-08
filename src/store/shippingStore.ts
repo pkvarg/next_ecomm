@@ -6,7 +6,8 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface ShippingInfo {
   name: string
-  address: string
+  street: string
+  house_number: string
   city: string
   zip: string
   country: string
@@ -14,7 +15,8 @@ interface ShippingInfo {
   note: string
   is_billing_address: boolean
   billing_name: string
-  billing_address: string
+  billing_street: string
+  billing_house_number: string
   billing_city: string
   billing_zip: string
   billing_country: string
@@ -40,7 +42,8 @@ const useShippingStore = create<ShippingStore>()(
     (set) => ({
       shippingInfo: {
         name: '',
-        address: '',
+        street: '',
+        house_number: '',
         city: '',
         zip: '',
         country: '',
@@ -48,7 +51,8 @@ const useShippingStore = create<ShippingStore>()(
         note: '',
         is_billing_address: false,
         billing_name: '',
-        billing_address: '',
+        billing_street: '',
+        billing_house_number: '',
         billing_city: '',
         billing_zip: '',
         billing_country: '',
@@ -82,7 +86,8 @@ const useShippingStore = create<ShippingStore>()(
         set(() => ({
           shippingInfo: {
             name: '',
-            address: '',
+            street: '',
+            house_number: '',
             city: '',
             zip: '',
             country: '',
@@ -90,7 +95,8 @@ const useShippingStore = create<ShippingStore>()(
             note: '',
             is_billing_address: false,
             billing_name: '',
-            billing_address: '',
+            billing_street: '',
+            billing_house_number: '',
             billing_city: '',
             billing_zip: '',
             billing_country: '',

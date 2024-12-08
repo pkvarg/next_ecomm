@@ -41,8 +41,8 @@ const Cart = () => {
     items.reduce((total, item) => total + item.priceInCents * item.qty, 0) / 100
 
   // TODO postage, tax to .env
-  const postage = 5
-  const tax = 25
+  const postage = process.env.NEXT_PUBLIC_POSTAGE
+  const tax = process.env.NEXT_PUBLIC_TAX
   const total = totalItemsPrice + 5
   const taxFromTotal = (total * 25) / 100
   const totalWithTax = roundUpToNearestTenth(total + taxFromTotal).toFixed(2)

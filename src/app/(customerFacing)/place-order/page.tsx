@@ -17,11 +17,6 @@ const PlaceOrder = () => {
   const [agreeTerms, setAgreeTerms] = useState(true)
   const [agreeNewsletter, setAgreeNewsletter] = useState(true)
 
-  const placeOrder = (e: any) => {
-    e.preventDefault()
-    // ...logic
-  }
-
   const { items } = useCartStore((state) => state)
   const { shippingInfo } = useShippingStore()
 
@@ -34,24 +29,42 @@ const PlaceOrder = () => {
   const totalItemsPrice =
     items.reduce((total, item) => total + item.priceInCents * item.qty, 0) / 100
 
-  const postage = 5
-  const tax = 25
+  const postage = process.env.NEXT_PUBLIC_POSTAGE // will depend on country
+  const tax = process.env.NEXT_PUBLIC_TAX
   const total = totalItemsPrice + 5
   const taxFromTotal = (total * 25) / 100
   const totalWithTax = roundUpToNearestTenth(total + taxFromTotal).toFixed(2)
+
+  console.log('products = items', items)
+  console.log('cart = shipping info', shippingInfo)
+
+  const userId = 'f1cb8ed7-e0cf-4536-bfbf-f3b8fcc25b13' // will come from login state
+
+  const placeOrder = (e: any) => {
+    e.preventDefault()
+    // ...logic cash or stripe
+    if (shippingInfo.payment_type === 'stripe') {
+      console.log('payment type', shippingInfo.payment_type)
+    } else {
+      // call create order that is reusable for stripe as well
+      //router.push('/')
+    }
+  }
 
   return (
     <div>
       <GoBack />
 
       <h1 className="text-center my-4 text-[32px]">Place Order</h1>
-      <div className="flex flex-col lg:flex-row gap-4 mx-4 lg:mx-[10%]">
+      <div className="flex flex-col lg:flex-row gap-4 mx-0 lg:mx-[10%]">
         <div className="flex flex-col lg:w-[65%]">
           <h1 className="font-bold">Delivery Info: </h1>
           <p>
             {shippingInfo.name}
             {', '}
-            {shippingInfo.address}
+            {shippingInfo.street}
+            {', '}
+            {shippingInfo.house_number}
             {', '}
             {shippingInfo.city}
             {', '}
@@ -67,7 +80,9 @@ const PlaceOrder = () => {
               <p>
                 {shippingInfo.billing_name}
                 {', '}
-                {shippingInfo.billing_address}
+                {shippingInfo.billing_street}
+                {', '}
+                {shippingInfo.billing_house_number}
                 {', '}
                 {shippingInfo.billing_city}
                 {', '}
