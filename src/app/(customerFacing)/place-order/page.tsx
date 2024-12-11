@@ -7,6 +7,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import useShippingStore from '@/store/shippingStore'
+import { createNewOrder } from '@/actions/orders'
+import { Order } from '../../../../types/types'
 
 const PlaceOrder = () => {
   // TODO agree Tick form
@@ -33,12 +35,20 @@ const PlaceOrder = () => {
   const tax = process.env.NEXT_PUBLIC_TAX
   const total = totalItemsPrice + 5
   const taxFromTotal = (total * 25) / 100
+  const totalWithTaxInCents = roundUpToNearestTenth(total + taxFromTotal) * 100
   const totalWithTax = roundUpToNearestTenth(total + taxFromTotal).toFixed(2)
 
   console.log('products = items', items)
   console.log('cart = shipping info', shippingInfo)
 
   const userId = 'f1cb8ed7-e0cf-4536-bfbf-f3b8fcc25b13' // will come from login state
+
+  const newOrder: Order = {
+    pricePaidInCents: totalWithTaxInCents.toString(),
+    userId,
+    userInfo: shippingInfo,
+    products: items,
+  }
 
   const placeOrder = (e: any) => {
     e.preventDefault()
@@ -48,6 +58,7 @@ const PlaceOrder = () => {
     } else {
       // call create order that is reusable for stripe as well
       //router.push('/')
+      createNewOrder(newOrder)
     }
   }
 
@@ -111,7 +122,7 @@ const PlaceOrder = () => {
           {items.map((item) => (
             <div key={item.id} className="flex overflow-hidden flex-row my-8">
               <div className="relative m-2">
-                <Image src={item.imagePath} width={50} height={50} alt={item.name} priority />
+                <Image src={item.imagePath || ''} width={50} height={50} alt={item.name} priority />
               </div>
 
               <div className="flex flex-col">

@@ -1,22 +1,22 @@
-interface Product {
+export interface Product {
   id: string
   name: string
   priceInCents: number
-  filePath: string
-  imagePath: string
-  description: string
-  isAvailableForPurchase: boolean
+  filePath?: string
+  imagePath?: string
+  description?: string
+  isAvailableForPurchase?: boolean
   createdAt: Date
   updatedAt: Date
   qty: number
-  downloadVerifications: []
+  downloadVerifications?: []
   countInStock: number
 }
 
-interface ShippingInfo {
+export interface ShippingInfo {
   name: string
   street: string
-  houseNumber: string
+  house_number: string
   city: string
   zip: string
   country: string
@@ -24,7 +24,8 @@ interface ShippingInfo {
   note: string
   is_billing_address: boolean
   billing_name: string
-  billing_address: string
+  billing_street: string
+  billing_house_number: string
   billing_city: string
   billing_zip: string
   billing_country: string
@@ -37,11 +38,11 @@ interface ShippingInfo {
   stripe: boolean
 }
 
-interface Order {
-  id: string
-  pricePaidInCents: number
-  createdAt: Date
-  updatedAt: Date
+export interface Order {
+  id?: string
+  pricePaidInCents: string
+  createdAt?: Date
+  updatedAt?: Date
   userId: string
   userInfo: ShippingInfo
   products: Product[]
