@@ -71,7 +71,14 @@ const Cart = () => {
           {items.map((item) => (
             <div key={item.id} className="flex overflow-hidden flex-row my-8">
               <div className="relative m-2">
-                <Image src={item.imagePath} width={50} height={50} alt={item.name} priority />
+                <Image
+                  src={item.imagePath || '/products/dummy_prod.webp'}
+                  width={50}
+                  height={50}
+                  alt={item.name}
+                  priority
+                  className="w-auto h-auto"
+                />
               </div>
 
               <div className="flex flex-col">

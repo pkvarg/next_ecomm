@@ -19,6 +19,8 @@ const PlaceOrder = () => {
   const [agreeTerms, setAgreeTerms] = useState(true)
   const [agreeNewsletter, setAgreeNewsletter] = useState(true)
 
+  const [createdOrderId, setCreatedOrderId] = useState('')
+
   const { items } = useCartStore((state) => state)
   const { shippingInfo } = useShippingStore()
 
@@ -50,7 +52,7 @@ const PlaceOrder = () => {
     products: items,
   }
 
-  const placeOrder = (e: any) => {
+  const placeOrder = async (e: any) => {
     e.preventDefault()
     // ...logic cash or stripe
     if (shippingInfo.payment_type === 'stripe') {
@@ -58,7 +60,12 @@ const PlaceOrder = () => {
     } else {
       // call create order that is reusable for stripe as well
       //router.push('/')
-      createNewOrder(newOrder)
+      const orderId = await createNewOrder(newOrder)
+
+      if (orderId) {
+        setCreatedOrderId(orderId)
+        router.push(`/order/${orderId}`)
+      }
     }
   }
 
@@ -122,7 +129,14 @@ const PlaceOrder = () => {
           {items.map((item) => (
             <div key={item.id} className="flex overflow-hidden flex-row my-8">
               <div className="relative m-2">
-                <Image src={item.imagePath || ''} width={50} height={50} alt={item.name} priority />
+                <Image
+                  src={item.imagePath || ''}
+                  width={50}
+                  height={50}
+                  alt={item.name}
+                  priority
+                  className="w-auto h-auto"
+                />
               </div>
 
               <div className="flex flex-col">

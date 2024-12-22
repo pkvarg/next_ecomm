@@ -21,7 +21,17 @@ export async function createNewOrder(newOrder: Order) {
     },
   })
 
-  return //
+  return order.id
+}
+
+export async function getOrderById(id: string) {
+  const order = await db.order.findFirst({
+    where: {
+      id: id,
+    },
+  })
+
+  return order
 }
 
 // export async function emailOrderHistory(
