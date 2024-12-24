@@ -36,11 +36,15 @@ export interface ShippingInfo {
   payment_type: string
   cash: boolean
   stripe: boolean
+  bank: boolean
 }
 
 export interface Order {
   id?: string
-  pricePaidInCents: string
+  pricePaidInCents: number
+  productTotalsPrice: number
+  postage: number
+  tax: number
   createdAt?: Date
   updatedAt?: Date
   userId: string

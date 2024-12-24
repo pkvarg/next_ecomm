@@ -12,6 +12,7 @@ interface CartState {
   addToCart: (product: Product, qty: number) => void
   updateItemQty: (productId: string, qty: number) => void
   removeFromCart: (productId: string) => void
+  resetCart: () => void
 }
 
 const useCartStore = create<CartState>()(
@@ -55,6 +56,10 @@ const useCartStore = create<CartState>()(
         const updatedItems = items.filter((item) => item.id !== productId)
 
         set({ items: updatedItems })
+      },
+      resetCart: () => {
+        set({ items: [] }) // Reset Zustand state
+        sessionStorage.removeItem('cart-storage') // Clear persisted data
       },
     }),
     {

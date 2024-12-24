@@ -19,8 +19,6 @@ const PlaceOrder = () => {
   const [agreeTerms, setAgreeTerms] = useState(true)
   const [agreeNewsletter, setAgreeNewsletter] = useState(true)
 
-  const [createdOrderId, setCreatedOrderId] = useState('')
-
   const { items } = useCartStore((state) => state)
   const { shippingInfo } = useShippingStore()
 
@@ -33,20 +31,20 @@ const PlaceOrder = () => {
   const totalItemsPrice =
     items.reduce((total, item) => total + item.priceInCents * item.qty, 0) / 100
 
-  const postage = process.env.NEXT_PUBLIC_POSTAGE // will depend on country
-  const tax = process.env.NEXT_PUBLIC_TAX
+  const postage = process.env.NEXT_PUBLIC_POSTAGE! // will depend on country
+  const tax = process.env.NEXT_PUBLIC_TAX!
   const total = totalItemsPrice + 5
   const taxFromTotal = (total * 25) / 100
   const totalWithTaxInCents = roundUpToNearestTenth(total + taxFromTotal) * 100
   const totalWithTax = roundUpToNearestTenth(total + taxFromTotal).toFixed(2)
 
-  console.log('products = items', items)
-  console.log('cart = shipping info', shippingInfo)
-
   const userId = 'f1cb8ed7-e0cf-4536-bfbf-f3b8fcc25b13' // will come from login state
 
   const newOrder: Order = {
-    pricePaidInCents: totalWithTaxInCents.toString(),
+    pricePaidInCents: totalWithTaxInCents,
+    productTotalsPrice: totalItemsPrice,
+    postage: parseInt(postage),
+    tax: parseInt(tax),
     userId,
     userInfo: shippingInfo,
     products: items,
@@ -63,7 +61,6 @@ const PlaceOrder = () => {
       const orderId = await createNewOrder(newOrder)
 
       if (orderId) {
-        setCreatedOrderId(orderId)
         router.push(`/order/${orderId}`)
       }
     }

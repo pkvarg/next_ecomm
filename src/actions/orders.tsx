@@ -13,9 +13,10 @@ export async function createNewOrder(newOrder: Order) {
   const order = await db.order.create({
     data: {
       pricePaidInCents: newOrder.pricePaidInCents,
+      productTotalsPrice: newOrder.productTotalsPrice,
+      postage: newOrder.postage,
+      tax: newOrder.postage,
       userId: newOrder.userId,
-      // userInfo: newOrder.userInfo,
-      // products: newOrder.products,
       userInfo: JSON.parse(JSON.stringify(newOrder.userInfo)), // Ensure JSON-compatible
       products: JSON.parse(JSON.stringify(newOrder.products)), // Ensure JSON-compatible
     },

@@ -27,6 +27,7 @@ interface ShippingInfo {
   payment_type: string
   cash: boolean
   stripe: boolean
+  bank: boolean
 }
 
 // Define the Zustand store's state and actions
@@ -63,6 +64,7 @@ const useShippingStore = create<ShippingStore>()(
         payment_type: '',
         cash: false,
         stripe: false,
+        bank: false,
       },
       setShippingInfo: (newInfo) =>
         // set((state) => ({
@@ -73,6 +75,7 @@ const useShippingStore = create<ShippingStore>()(
           let paymentType = state.shippingInfo.payment_type // Preserve the current value by default
           if (newInfo.cash) paymentType = 'cash'
           if (newInfo.stripe) paymentType = 'stripe'
+          if (newInfo.bank) paymentType = 'bank transfer'
 
           return {
             shippingInfo: {
@@ -82,7 +85,7 @@ const useShippingStore = create<ShippingStore>()(
             },
           }
         }),
-      resetShippingInfo: () =>
+      resetShippingInfo: () => {
         set(() => ({
           shippingInfo: {
             name: '',
@@ -107,8 +110,11 @@ const useShippingStore = create<ShippingStore>()(
             payment_type: '',
             cash: false,
             stripe: false,
+            bank: false,
           },
         })),
+          sessionStorage.removeItem('shipping-storage') // Clear persisted data
+      },
     }),
     {
       name: 'shipping-storage', // Key in localStorage

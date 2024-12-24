@@ -1,7 +1,7 @@
 const CURRENCY_FORMATTER = new Intl.NumberFormat('sk-SK', {
   currency: 'EUR',
   style: 'currency',
-  minimumFractionDigits: 0,
+  minimumFractionDigits: 2,
 })
 
 export function formatCurrency(amount: number) {

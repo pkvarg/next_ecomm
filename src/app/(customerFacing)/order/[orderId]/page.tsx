@@ -4,6 +4,7 @@ import { Order as OrderType, ShippingInfo, Product } from '../../../../../types/
 import Image from 'next/image'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
+import ResetStoreButton from '@/components/ResetStoreButton'
 
 // Type guard to ensure JsonValue is ShippingInfo
 function isShippingInfo(value: any): value is ShippingInfo {
@@ -56,7 +57,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
       <div>
         <h1>Your order {orderId} </h1>
         <div className="flex flex-col gap-1 mt-4">
-          <h2>Shipping Info:</h2>
+          <h2 className="font-bold">Shipping Info:</h2>
 
           <p>{order.userInfo.name}</p>
           <p>
@@ -69,7 +70,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
         </div>
 
         <div className="flex flex-col gap-1 mt-4">
-          <h2>Billing Info:</h2>
+          <h2 className="font-bold">Billing Info:</h2>
 
           <p>{order.userInfo.billing_name || order.userInfo.name}</p>
           <p>
@@ -89,11 +90,11 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
         </div>
 
         <div className="flex flex-col gap-1 mt-4">
-          <h2>Payment Method: {order.userInfo.payment_type}</h2>
+          <h2 className="font-bold capitalize">Payment Method: {order.userInfo.payment_type}</h2>
         </div>
 
         <div className="flex flex-col gap-1 mt-4">
-          <h2>Products:</h2>
+          <h2 className="font-bold">Products:</h2>
           {order.products.map((item) => (
             <div key={item.id} className="flex overflow-hidden flex-row my-8">
               <div className="relative m-2">
@@ -119,11 +120,14 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
           ))}
         </div>
       </div>
-      <div>
+      <div className="mt-0 bg-gray-100 lg:w-[25%] h-fit lg:mt-8 p-4 font-bold">
         <h1>Totals:</h1>
-        <p>Products:</p>
-        <p>Postage:</p>
-        <p>Total: {formatCurrency(parseInt(order.pricePaidInCents) / 100)}</p>
+        <p>Products: {formatCurrency(order.productTotalsPrice)}</p>
+        <p>Postage: {formatCurrency(order.postage)}</p>
+        <p>Tax: {formatCurrency(order.tax)}</p>
+        <div className="h-[1.5px] bg-black"></div>
+        <p>Total: {formatCurrency(order.pricePaidInCents / 100)}</p>
+        <ResetStoreButton />
       </div>
     </div>
   )
