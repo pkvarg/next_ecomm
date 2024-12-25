@@ -3,7 +3,7 @@ export interface Product {
   name: string
   priceInCents: number
   filePath?: string
-  imagePath?: string
+  imagePath: string
   description?: string
   isAvailableForPurchase?: boolean
   createdAt: Date

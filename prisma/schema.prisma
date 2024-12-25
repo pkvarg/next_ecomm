@@ -23,7 +23,7 @@ model Product {
   name                   String
   priceInCents           Int
   filePath               String?
-  imagePath              String?
+  imagePath              String
   description            String?
   isAvailableForPurchase Boolean                @default(true)
   createdAt              DateTime               @default(now())

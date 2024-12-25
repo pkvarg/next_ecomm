@@ -33,30 +33,19 @@ type CheckoutFormProps = {
   clientSecret: string
 }
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string
-)
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string)
 
 export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
   return (
-    <div className='max-w-5xl w-full mx-auto space-y-8'>
-      <div className='flex gap-4 items-center'>
-        <div className='aspect-video flex-shrink-0 w-1/3 relative'>
-          <Image
-            src={product.imagePath}
-            fill
-            alt={product.name}
-            className='object-cover'
-          />
+    <div className="max-w-5xl w-full mx-auto space-y-8">
+      <div className="flex gap-4 items-center">
+        <div className="aspect-video flex-shrink-0 w-1/3 relative">
+          <Image src={product.imagePath} fill alt={product.name} className="object-cover" />
         </div>
         <div>
-          <div className='text-lg'>
-            {formatCurrency(product.priceInCents / 100)}
-          </div>
-          <h1 className='text-2xl font-bold'>{product.name}</h1>
-          <div className='line-clamp-3 text-muted-foreground'>
-            {product.description}
-          </div>
+          <div className="text-lg">{formatCurrency(product.priceInCents / 100)}</div>
+          <h1 className="text-2xl font-bold">{product.name}</h1>
+          <div className="line-clamp-3 text-muted-foreground">{product.description}</div>
         </div>
       </div>
       <Elements options={{ clientSecret }} stripe={stripePromise}>
@@ -66,13 +55,7 @@ export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
   )
 }
 
-function Form({
-  priceInCents,
-  productId,
-}: {
-  priceInCents: number
-  productId: string
-}) {
+function Form({ priceInCents, productId }: { priceInCents: number; productId: string }) {
   const stripe = useStripe()
   const elements = useElements()
   const [isLoading, setIsLoading] = useState(false)
@@ -86,15 +69,15 @@ function Form({
 
     setIsLoading(true)
 
-    const orderExists = await userOrderExists(email, productId)
+    // const orderExists = await userOrderExists(email, productId)
 
-    if (orderExists) {
-      setErrorMessage(
-        'You have already purchased this product. Try downloading it from the My Orders page'
-      )
-      setIsLoading(false)
-      return
-    }
+    // if (orderExists) {
+    //   setErrorMessage(
+    //     'You have already purchased this product. Try downloading it from the My Orders page'
+    //   )
+    //   setIsLoading(false)
+    //   return
+    // }
 
     stripe
       .confirmPayment({
@@ -119,28 +102,22 @@ function Form({
         <CardHeader>
           <CardTitle>Checkout</CardTitle>
           {errorMessage && (
-            <CardDescription className='text-destructive'>
-              {errorMessage}
-            </CardDescription>
+            <CardDescription className="text-destructive">{errorMessage}</CardDescription>
           )}
         </CardHeader>
         <CardContent>
           <PaymentElement />
-          <div className='mt-4'>
-            <LinkAuthenticationElement
-              onChange={(e) => setEmail(e.value.email)}
-            />
+          <div className="mt-4">
+            <LinkAuthenticationElement onChange={(e) => setEmail(e.value.email)} />
           </div>
         </CardContent>
         <CardFooter>
           <Button
-            className='w-full'
-            size='lg'
+            className="w-full"
+            size="lg"
             disabled={stripe == null || elements == null || isLoading}
           >
-            {isLoading
-              ? 'Purchasing...'
-              : `Purchase ${formatCurrency(priceInCents / 100)}`}
+            {isLoading ? 'Purchasing...' : `Purchase ${formatCurrency(priceInCents / 100)}`}
           </Button>
         </CardFooter>
       </Card>

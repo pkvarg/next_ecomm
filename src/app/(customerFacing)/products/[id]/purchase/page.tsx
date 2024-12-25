@@ -5,11 +5,7 @@ import { CheckoutForm } from './_components/CheckoutForm'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 
-export default async function PurchasePage({
-  params: { id },
-}: {
-  params: { id: string }
-}) {
+export default async function PurchasePage({ params: { id } }: { params: { id: string } }) {
   const product = await db.product.findUnique({ where: { id } })
   if (product == null) return notFound()
 
@@ -25,7 +21,10 @@ export default async function PurchasePage({
 
   return (
     <CheckoutForm
-      product={product}
+      product={{
+        ...product,
+        description: product.description || '', // Provide fallback value if description is null
+      }}
       clientSecret={paymentIntent.client_secret}
     />
   )

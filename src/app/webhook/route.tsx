@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   const event = await stripe.webhooks.constructEvent(
     await req.text(),
     req.headers.get('stripe-signature') as string,
-    process.env.STRIPE_WEBHOOK_SECRET as string
+    process.env.STRIPE_WEBHOOK_SECRET as string,
   )
 
   if (event.type === 'charge.succeeded') {
@@ -31,14 +31,14 @@ export async function POST(req: NextRequest) {
       orders: { create: { productId, pricePaidInCents } },
     }
 
-    const {
-      orders: [order],
-    } = await db.user.upsert({
-      where: { email },
-      create: userFields,
-      update: userFields,
-      select: { orders: { orderBy: { createdAt: 'desc' }, take: 1 } },
-    })
+    // const {
+    //   orders: [order],
+    // } = await db.user.upsert({
+    //   where: { email },
+    //   create: userFields,
+    //   update: userFields,
+    //   select: { orders: { orderBy: { createdAt: 'desc' }, take: 1 } },
+    // })
 
     const downloadVerification = await db.downloadVerification.create({
       data: {
@@ -47,22 +47,22 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    try {
-      await resend.emails.send({
-        from: `Support <${process.env.SENDER_EMAIL}>`,
-        to: email,
-        subject: 'Order Confirmation',
-        react: (
-          <PurchaseReceiptEmail
-            order={order}
-            product={product}
-            downloadVerificationId={downloadVerification.id}
-          />
-        ),
-      })
-    } catch (error) {
-      console.log('resend error', error)
-    }
+    // try {
+    //   await resend.emails.send({
+    //     from: `Support <${process.env.SENDER_EMAIL}>`,
+    //     to: email,
+    //     subject: 'Order Confirmation',
+    //     react: (
+    //       <PurchaseReceiptEmail
+    //         order={order}
+    //         product={product}
+    //         downloadVerificationId={downloadVerification.id}
+    //       />
+    //     ),
+    //   })
+    // } catch (error) {
+    //   console.log('resend error', error)
+    // }
   }
 
   return new NextResponse()

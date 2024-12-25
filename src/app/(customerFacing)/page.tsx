@@ -72,5 +72,7 @@ function ProductGridSection({ productsFetcher, title }: ProductGridSectionProps)
 }
 
 async function ProductSuspense({ productsFetcher }: { productsFetcher: () => Promise<Product[]> }) {
-  return (await productsFetcher()).map((product) => <ProductCard key={product.id} {...product} />)
+  return (await productsFetcher()).map((product: any) => (
+    <ProductCard key={product.id} {...product} />
+  ))
 }

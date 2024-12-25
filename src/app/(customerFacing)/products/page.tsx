@@ -12,7 +12,7 @@ const getProducts = cache(() => {
 
 export default function ProductsPage() {
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <Suspense
         fallback={
           <>
@@ -34,7 +34,5 @@ export default function ProductsPage() {
 async function ProductsSuspense() {
   const products = await getProducts()
 
-  return products.map((product) => (
-    <ProductCard key={product.id} {...product} />
-  ))
+  return products.map((product: any) => <ProductCard key={product.id} {...product} />)
 }

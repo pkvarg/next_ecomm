@@ -1,18 +1,12 @@
 'use client'
 import { formatCurrency } from '@/lib/formatters'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from './ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
 import useCartStore from '@/store/cartStore'
-import { Product } from '@prisma/client'
+//import { Product } from '@prisma/client'
+import { Product } from '../../types/types'
 
 import { useState } from 'react'
 
@@ -43,38 +37,31 @@ export function ProductCard(product: ProductTypes) {
   }
 
   return (
-    <Card className='flex overflow-hidden flex-col'>
-      <div className='relative w-full h-auto aspect-video'>
+    <Card className="flex overflow-hidden flex-col">
+      <div className="relative w-full h-auto aspect-video">
         <Image src={product.imagePath} fill alt={product.name} />
       </div>
       <CardHeader>
         <CardTitle>{product.name}</CardTitle>
-        <CardDescription>
-          {formatCurrency(product.priceInCents / 100)}
-        </CardDescription>
+        <CardDescription>{formatCurrency(product.priceInCents / 100)}</CardDescription>
       </CardHeader>
-      <CardContent className='flex-grow'>
-        <p className='line-clamp-4 text-left'>{product.description}</p>
+      <CardContent className="flex-grow">
+        <p className="line-clamp-4 text-left">{product.description}</p>
 
-        <div className='flex gap-4 flex-row justify-end mr-8'>
-          <p onClick={decrement} className='cursor-pointer'>
+        <div className="flex gap-4 flex-row justify-end mr-8">
+          <p onClick={decrement} className="cursor-pointer">
             -
           </p>
           <h1>{count}</h1>
 
-          <p onClick={increment} className='cursor-pointer'>
+          <p onClick={increment} className="cursor-pointer">
             +
           </p>
         </div>
       </CardContent>
 
       <CardFooter>
-        <Button
-          asChild
-          size='lg'
-          className='w-full'
-          onClick={() => addToCart(product, count)}
-        >
+        <Button asChild size="lg" className="w-full" onClick={() => addToCart(product, count)}>
           {/* <Link href={`/products/${id}/purchase`}>Purchase</Link> */}
           <p>Add to Cart</p>
         </Button>
@@ -85,23 +72,23 @@ export function ProductCard(product: ProductTypes) {
 
 export function ProductCardSkeleton() {
   return (
-    <Card className='overflow-hidden flex flex-col animate-pulse'>
-      <div className='w-full aspect-video bg-gray-300' />
+    <Card className="overflow-hidden flex flex-col animate-pulse">
+      <div className="w-full aspect-video bg-gray-300" />
       <CardHeader>
         <CardTitle>
-          <div className='w-3/4 h-6 rounded-full bg-gray-300' />
+          <div className="w-3/4 h-6 rounded-full bg-gray-300" />
         </CardTitle>
         <CardDescription>
-          <div className='w-1/2 h-4 rounded-full bg-gray-300' />
+          <div className="w-1/2 h-4 rounded-full bg-gray-300" />
         </CardDescription>
       </CardHeader>
-      <CardContent className='space-y-2'>
-        <div className='w-full h-4 rounded-full bg-gray-300' />
-        <div className='w-full h-4 rounded-full bg-gray-300' />
-        <div className='w-3/4 h-4 rounded-full bg-gray-300' />
+      <CardContent className="space-y-2">
+        <div className="w-full h-4 rounded-full bg-gray-300" />
+        <div className="w-full h-4 rounded-full bg-gray-300" />
+        <div className="w-3/4 h-4 rounded-full bg-gray-300" />
       </CardContent>
       <CardFooter>
-        <Button className='w-full' disabled size='lg'></Button>
+        <Button className="w-full" disabled size="lg"></Button>
       </CardFooter>
     </Card>
   )
