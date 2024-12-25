@@ -6,16 +6,16 @@ import fs from 'fs/promises'
 import { notFound, redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
-const fileSchema = z.instanceof(File, { message: 'Required' })
-const imageSchema = fileSchema.refine(
-  (file) => file.size === 0 || file.type.startsWith('image/')
-)
+//const fileSchema = z.instanceof(File, { message: 'Required' })
+const fileSchema = z.instanceof(File)
+const imageSchema = fileSchema.refine((file) => file.size === 0 || file.type.startsWith('image/'))
 
 const addSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
   priceInCents: z.coerce.number().int().min(1),
-  file: fileSchema.refine((file) => file.size > 0, 'Required'),
+  countInStock: z.coerce.number().int().min(0),
+  file: z.instanceof(File).optional().or(z.null()),
   image: imageSchema.refine((file) => file.size > 0, 'Required'),
 })
 
@@ -28,14 +28,20 @@ export async function addProduct(prevState: unknown, formData: FormData) {
   const data = result.data
 
   await fs.mkdir('products', { recursive: true })
-  const filePath = `products/${crypto.randomUUID()}-${data.file.name}`
-  await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()))
+
+  const filePath =
+    data.file && data.file.size > 0 ? `products/${crypto.randomUUID()}-${data.file.name}` : null
+
+  if (filePath && data.file) {
+    await fs.writeFile(filePath, new Uint8Array(Buffer.from(await data.file.arrayBuffer())))
+  }
 
   await fs.mkdir('public/products', { recursive: true })
   const imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`
+
   await fs.writeFile(
     `public${imagePath}`,
-    Buffer.from(await data.image.arrayBuffer())
+    new Uint8Array(Buffer.from(await data.image.arrayBuffer())),
   )
 
   await db.product.create({
@@ -44,6 +50,7 @@ export async function addProduct(prevState: unknown, formData: FormData) {
       name: data.name,
       description: data.description,
       priceInCents: data.priceInCents,
+      countInStock: data.countInStock,
       filePath,
       imagePath,
     },
@@ -60,11 +67,7 @@ const editSchema = addSchema.extend({
   image: imageSchema.optional(),
 })
 
-export async function updateProduct(
-  id: string,
-  prevState: unknown,
-  formData: FormData
-) {
+export async function updateProduct(id: string, prevState: unknown, formData: FormData) {
   const result = editSchema.safeParse(Object.fromEntries(formData.entries()))
   if (result.success === false) {
     return result.error.formErrors.fieldErrors
@@ -76,19 +79,21 @@ export async function updateProduct(
   if (product == null) return notFound()
 
   let filePath = product.filePath
-  if (data.file != null && data.file.size > 0) {
+  if (data.file != null && data.file.size > 0 && product.filePath) {
     await fs.unlink(product.filePath)
     filePath = `products/${crypto.randomUUID()}-${data.file.name}`
-    await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()))
+    // await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()))
+    await fs.writeFile(filePath, new Uint8Array(Buffer.from(await data.file.arrayBuffer())))
   }
 
   let imagePath = product.imagePath
   if (data.image != null && data.image.size > 0) {
     await fs.unlink(`public${product.imagePath}`)
     imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`
+    // await fs.writeFile(`public${imagePath}`, Buffer.from(await data.image.arrayBuffer()))
     await fs.writeFile(
       `public${imagePath}`,
-      Buffer.from(await data.image.arrayBuffer())
+      new Uint8Array(Buffer.from(await data.image.arrayBuffer())),
     )
   }
 
@@ -98,6 +103,7 @@ export async function updateProduct(
       name: data.name,
       description: data.description,
       priceInCents: data.priceInCents,
+      countInStock: data.countInStock,
       filePath,
       imagePath,
     },
@@ -109,10 +115,7 @@ export async function updateProduct(
   redirect('/admin/products')
 }
 
-export async function toggleProductAvailability(
-  id: string,
-  isAvailableForPurchase: boolean
-) {
+export async function toggleProductAvailability(id: string, isAvailableForPurchase: boolean) {
   await db.product.update({ where: { id }, data: { isAvailableForPurchase } })
 
   revalidatePath('/')
@@ -124,8 +127,16 @@ export async function deleteProduct(id: string) {
 
   if (product == null) return notFound()
 
-  await fs.unlink(product.filePath)
-  await fs.unlink(`public${product.imagePath}`)
+  if (product.filePath) {
+    await fs.unlink(product.filePath)
+  }
+
+  if (product.imagePath) {
+    await fs.unlink(`public${product.imagePath}`)
+  }
+
+  // await fs.unlink(product.filePath)
+  // await fs.unlink(`public${product.imagePath}`)
 
   revalidatePath('/')
   revalidatePath('/products')

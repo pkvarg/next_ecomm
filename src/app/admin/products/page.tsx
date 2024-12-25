@@ -19,18 +19,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  ActiveToggleDropdownItem,
-  DeleteDropdownItem,
-} from './_components/ProductActions'
+import { ActiveToggleDropdownItem, DeleteDropdownItem } from './_components/ProductActions'
 
 export default function AdminProductsPage() {
   return (
     <>
-      <div className='flex justify-between items-center gap-4'>
+      <div className="flex justify-between items-center gap-4">
         <PageHeader>Products</PageHeader>
         <Button asChild>
-          <Link href='/admin/products/new'>Add Product</Link>
+          <Link href="/admin/products/new">Add Product</Link>
         </Button>
       </div>
       <ProductsTable />
@@ -45,7 +42,8 @@ async function ProductsTable() {
       name: true,
       priceInCents: true,
       isAvailableForPurchase: true,
-      _count: { select: { orders: true } },
+      countInStock: true,
+      //_count: { select: { orders: true } },
     },
     orderBy: { name: 'asc' },
   })
@@ -56,14 +54,14 @@ async function ProductsTable() {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className='w-0'>
-            <span className='sr-only'>Available For Purchase</span>
+          <TableHead className="w-0">
+            <span className="sr-only">Available For Purchase</span>
           </TableHead>
           <TableHead>Name</TableHead>
           <TableHead>Price</TableHead>
-          <TableHead>Orders</TableHead>
-          <TableHead className='w-0'>
-            <span className='sr-only'>Actions</span>
+          <TableHead>Count In Stock</TableHead>
+          <TableHead className="w-0">
+            <span className="sr-only">Actions</span>
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -73,24 +71,24 @@ async function ProductsTable() {
             <TableCell>
               {product.isAvailableForPurchase ? (
                 <>
-                  <span className='sr-only'>Available</span>
+                  <span className="sr-only">Available</span>
                   <CheckCircle2 />
                 </>
               ) : (
                 <>
-                  <span className='sr-only'>Unavailable</span>
-                  <XCircle className='stroke-destructive' />
+                  <span className="sr-only">Unavailable</span>
+                  <XCircle className="stroke-destructive" />
                 </>
               )}
             </TableCell>
             <TableCell>{product.name}</TableCell>
             <TableCell>{formatCurrency(product.priceInCents / 100)}</TableCell>
-            <TableCell>{formatNumber(product._count.orders)}</TableCell>
+            <TableCell>{formatNumber(product.countInStock ? product.countInStock : 0)}</TableCell>
             <TableCell>
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <MoreVertical />
-                  <span className='sr-only'>Actions</span>
+                  <span className="sr-only">Actions</span>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
@@ -99,19 +97,14 @@ async function ProductsTable() {
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={`/admin/products/${product.id}/edit`}>
-                      Edit
-                    </Link>
+                    <Link href={`/admin/products/${product.id}/edit`}>Edit</Link>
                   </DropdownMenuItem>
                   <ActiveToggleDropdownItem
                     id={product.id}
                     isAvailableForPurchase={product.isAvailableForPurchase}
                   />
                   <DropdownMenuSeparator />
-                  <DeleteDropdownItem
-                    id={product.id}
-                    disabled={product._count.orders > 0}
-                  />
+                  {/* <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} /> */}
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>

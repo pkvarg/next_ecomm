@@ -30,7 +30,7 @@ model Product {
   updatedAt              DateTime               @updatedAt
   //orders                 Order[]
   downloadVerifications  DownloadVerification[]
-  countInStock             Int?
+  countInStock             Int @default(0)
 }
 
 model User {
