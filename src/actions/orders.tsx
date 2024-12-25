@@ -4,7 +4,7 @@ import db from '@/db/db'
 import OrderHistoryEmail from '@/email/OrderHistory'
 import { Resend } from 'resend'
 import { z } from 'zod'
-import { Order } from '../../types/types'
+import { Order, Product } from '../../types/types'
 
 const emailSchema = z.string().email()
 const resend = new Resend(process.env.RESEND_API_KEY as string)
@@ -22,7 +22,46 @@ export async function createNewOrder(newOrder: Order) {
     },
   })
 
+  await updateProductCountInStockAndAvailability(newOrder.products)
+
   return order.id
+}
+
+async function updateProductCountInStockAndAvailability(products: Product[]) {
+  for (const product of products) {
+    // Fetch the product from the database by its ID
+    const prod = await db.product.findUnique({
+      where: {
+        id: product.id,
+      },
+    })
+
+    if (!prod) {
+      // If product is not found, you may want to log it or handle the case.
+      console.log(`Product with id ${product.id} not found.`)
+      continue // Skip to the next iteration
+    }
+
+    // Calculate the new quantity after subtracting the qty from countInStock
+    const newQty = prod.countInStock - product.qty
+
+    const updateData: any = {
+      countInStock: newQty, // Set the new countInStock value
+    }
+
+    // If newQty is zero, update isAvailableForPurchase to false
+    if (newQty === 0) {
+      updateData.isAvailableForPurchase = false
+    }
+
+    // Update the product's countInStock and possibly isAvailableForPurchase
+    await db.product.update({
+      where: {
+        id: product.id, // Use the product's ID to find the correct product
+      },
+      data: updateData,
+    })
+  }
 }
 
 export async function getOrderById(id: string) {

@@ -136,7 +136,7 @@ const PlaceOrder = () => {
                 />
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col mt-2">
                 <CardTitle>{item.name}</CardTitle>
                 <CardDescription>
                   <span className="line-clamp-4">{item.description}</span>

@@ -53,7 +53,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
   }
 
   return (
-    <div className="text-black flex flex-col lg:flex-row">
+    <div className="text-black flex flex-col lg:flex-row justify-between mx-2 lg:mx-[10%]">
       <div>
         <h1>Your order {orderId} </h1>
         <div className="flex flex-col gap-1 mt-4">
@@ -108,7 +108,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
                 />
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col mt-2">
                 <CardTitle>{item.name}</CardTitle>
                 <CardDescription>
                   <span className="line-clamp-4">{item.description}</span>

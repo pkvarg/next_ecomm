@@ -73,22 +73,22 @@ const Cart = () => {
               <div className="relative m-2">
                 <Image
                   src={item.imagePath || '/products/dummy_prod.webp'}
-                  width={50}
-                  height={50}
+                  width={75}
+                  height={75}
                   alt={item.name}
                   priority
                   className="w-auto h-auto"
                 />
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col mt-2">
                 <CardTitle>{item.name}</CardTitle>
                 <CardDescription>
                   <span className="line-clamp-4">{item.description}</span>
 
                   {formatCurrency(item.priceInCents / 100)}
                 </CardDescription>
-                <div className="flex gap-4 ml-[62.5%] lg:ml-auto -mt-4 items-center">
+                <div className="flex gap-4 ml-[62.5%] lg:ml-auto mt-4 items-center">
                   <p onClick={() => decrement(item.id, item.qty)} className="cursor-pointer">
                     -
                   </p>
