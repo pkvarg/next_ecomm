@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 
 import { IoCartOutline } from 'react-icons/io5'
 import useCartStore from '@/store/cartStore'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 
 export function Nav({ children }: { children: ReactNode }) {
   const user = userStore((state: any) => state.user)
@@ -27,11 +28,22 @@ export function Nav({ children }: { children: ReactNode }) {
     <nav className="bg-primary text-primary-foreground flex justify-center px-4 py-3">
       <div>{children}</div>
 
-      <div onClick={goToCart} className="flex flex-row mt-auto ml-auto relative cursor-pointer">
-        <IoCartOutline className="text-[25px]" />
-        <p className="text-white absolute left-[12.5px] -top-[5px]">
-          <span className="px-[5px] bg-red-600 rounded-2xl">{items.length}</span>
-        </p>
+      <div className="flex flex-row mt-auto ml-auto relative cursor-pointer items-center">
+        <div className="mr-4">
+          <SignedOut>
+            <SignInButton mode="modal" />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </div>
+        <div onClick={goToCart}>
+          <IoCartOutline className="text-[25px]" />
+          <p className="text-white absolute -right-[5px]  -top-[5px]">
+            <span className="px-[5px] bg-red-600 rounded-2xl">{items.length}</span>
+          </p>
+        </div>
+
         {/* <p>{user.full_name}</p> */}
 
         {/* <input

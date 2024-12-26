@@ -5,7 +5,7 @@ import { Button } from './ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
 import useCartStore from '@/store/cartStore'
-//import { Product } from '@prisma/client'
+import { FaRegFile } from 'react-icons/fa'
 import { Product } from '../../types/types'
 
 import { useState } from 'react'
@@ -39,25 +39,31 @@ export function ProductCard(product: ProductTypes) {
   return (
     <Card className="flex overflow-hidden flex-col">
       <div className="relative w-full h-auto aspect-video">
-        <Image src={product.imagePath} fill alt={product.name} />
+        <Image src={product.imagePath} fill sizes="50" alt={product.name} priority />
       </div>
       <CardHeader>
-        <CardTitle>{product.name}</CardTitle>
+        <div className="flex flex-row justify-between">
+          <CardTitle>{product.name}</CardTitle>
+          {!product.filePath && <FaRegFile className="text-[25px]" />}
+        </div>
+
         <CardDescription>{formatCurrency(product.priceInCents / 100)}</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
         <p className="line-clamp-4 text-left">{product.description}</p>
 
-        <div className="flex gap-4 flex-row justify-end mr-8">
-          <p onClick={decrement} className="cursor-pointer">
-            -
-          </p>
-          <h1>{count}</h1>
+        {product.filePath && (
+          <div className="flex gap-4 flex-row justify-end mr-8">
+            <p onClick={decrement} className="cursor-pointer">
+              -
+            </p>
+            <h1>{count}</h1>
 
-          <p onClick={increment} className="cursor-pointer">
-            +
-          </p>
-        </div>
+            <p onClick={increment} className="cursor-pointer">
+              +
+            </p>
+          </div>
+        )}
       </CardContent>
 
       <CardFooter>

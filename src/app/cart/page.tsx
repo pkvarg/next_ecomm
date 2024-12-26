@@ -6,6 +6,7 @@ import { formatCurrency } from '@/lib/formatters'
 import Image from 'next/image'
 import { Nav, NavLink } from '@/components/Nav'
 import { BsTrash } from 'react-icons/bs'
+import { FaRegFile } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
 
 const Cart = () => {
@@ -82,25 +83,35 @@ const Cart = () => {
               </div>
 
               <div className="flex flex-col mt-2">
-                <CardTitle>{item.name}</CardTitle>
+                <div className="flex flex-row justify-between gap-4">
+                  <CardTitle>{item.name}</CardTitle>
+                  {!item.filePath && <FaRegFile className="text-[25px]" />}
+                </div>
+
                 <CardDescription>
                   <span className="line-clamp-4">{item.description}</span>
 
                   {formatCurrency(item.priceInCents / 100)}
                 </CardDescription>
-                <div className="flex gap-4 ml-[62.5%] lg:ml-auto mt-4 items-center">
-                  <p onClick={() => decrement(item.id, item.qty)} className="cursor-pointer">
-                    -
-                  </p>
-                  <h1>{item.qty}</h1>
+                {item.filePath ? (
+                  <div className="flex gap-4 ml-[62.5%] lg:ml-auto mt-4 items-center">
+                    <p onClick={() => decrement(item.id, item.qty)} className="cursor-pointer">
+                      -
+                    </p>
+                    <h1>{item.qty}</h1>
 
-                  <p onClick={() => increment(item.id, item.qty)} className="cursor-pointer">
-                    +
-                  </p>
-                  <p onClick={() => removeFromCart(item.id)} className="cursor-pointer">
+                    <p onClick={() => increment(item.id, item.qty)} className="cursor-pointer">
+                      +
+                    </p>
+                    <p onClick={() => removeFromCart(item.id)} className="cursor-pointer">
+                      <BsTrash />
+                    </p>
+                  </div>
+                ) : (
+                  <p onClick={() => removeFromCart(item.id)} className="cursor-pointer ml-auto">
                     <BsTrash />
                   </p>
-                </div>
+                )}
               </div>
             </div>
           ))}
