@@ -53,8 +53,8 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
   }
 
   return (
-    <div className="text-black flex flex-col lg:flex-row justify-between mx-2 lg:mx-[10%]">
-      <div>
+    <div className="text-black flex flex-col lg:flex-row mx-2 gap-8 lg:mx-[5%]">
+      <div className="w-[65%]">
         <h1>Your order {orderId} </h1>
         <div className="flex flex-col gap-1 mt-4">
           <h2 className="font-bold">Shipping Info:</h2>
@@ -111,7 +111,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
               <div className="flex flex-col mt-2">
                 <CardTitle>{item.name}</CardTitle>
                 <CardDescription>
-                  <span className="line-clamp-4">{item.description}</span>
+                  <span className="line-clamp-4 text-justify max-w-[100%]">{item.description}</span>
                   {formatCurrency(item.priceInCents / 100)} x {item.qty} =
                   {formatCurrency((item.priceInCents / 100) * item.qty)}
                 </CardDescription>
@@ -120,7 +120,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
           ))}
         </div>
       </div>
-      <div className="mt-0 bg-gray-100 lg:w-[25%] h-fit lg:mt-8 p-4 font-bold">
+      <div className="mt-0 bg-gray-100 h-fit w-[35%] lg:mt-8 p-4 font-bold">
         <h1>Totals:</h1>
         <p>Products: {formatCurrency(order.productTotalsPrice)}</p>
         <p>Postage: {formatCurrency(order.postage)}</p>

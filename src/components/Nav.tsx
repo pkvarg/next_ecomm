@@ -3,17 +3,27 @@
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ComponentProps, ReactNode } from 'react'
-import { userStore } from '@/store/user'
+import { ComponentProps, ReactNode, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-
 import { IoCartOutline } from 'react-icons/io5'
 import useCartStore from '@/store/cartStore'
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/nextjs'
+import { getUserEmail } from '@/app/actions/getUserEmail'
+import { saveEmail } from '@/lib/saveUserEmail'
 
 export function Nav({ children }: { children: ReactNode }) {
-  //const user = userStore((state: any) => state.user)
-  //const updateUser = userStore((state: any) => state.updateUser)
+  const userId = useUser().user?.id
+  console.log('nv userId', userId)
+
+  useEffect(() => {
+    if (userId) {
+      const userEmail = async () => {
+        const email = await getUserEmail(userId)
+        saveEmail(email)
+      }
+      userEmail()
+    }
+  }, [userId])
 
   // new cart
   const { items } = useCartStore((state) => state)

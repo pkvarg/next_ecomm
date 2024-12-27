@@ -16,7 +16,7 @@ export async function createNewOrder(newOrder: Order) {
       productTotalsPrice: newOrder.productTotalsPrice,
       postage: newOrder.postage,
       tax: newOrder.postage,
-      userId: newOrder.userId,
+      userEmail: newOrder.userEmail,
       userInfo: JSON.parse(JSON.stringify(newOrder.userInfo)), // Ensure JSON-compatible
       products: JSON.parse(JSON.stringify(newOrder.products)), // Ensure JSON-compatible
     },
@@ -88,21 +88,6 @@ export async function emailOrderHistory(
     where: { email: result.data },
     select: {
       email: true,
-      orders: {
-        select: {
-          pricePaidInCents: true,
-          id: true,
-          createdAt: true,
-          // product: {
-          //   select: {
-          //     id: true,
-          //     name: true,
-          //     imagePath: true,
-          //     description: true,
-          //   },
-          // },
-        },
-      },
     },
   })
 

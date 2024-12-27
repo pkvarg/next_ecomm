@@ -38,7 +38,7 @@ model User {
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  orders    Order[]
+  //orders    Order[]
 }
 
 model Order {
@@ -49,11 +49,9 @@ model Order {
   tax Int
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  userId    String
+  userEmail String
   userInfo Json
   products Json
-  user      User    @relation(fields: [userId], references: [id])
-  //product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 }
 
 // model OrderLegacy {
