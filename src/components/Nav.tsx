@@ -12,8 +12,8 @@ import useCartStore from '@/store/cartStore'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 
 export function Nav({ children }: { children: ReactNode }) {
-  const user = userStore((state: any) => state.user)
-  const updateUser = userStore((state: any) => state.updateUser)
+  //const user = userStore((state: any) => state.user)
+  //const updateUser = userStore((state: any) => state.updateUser)
 
   // new cart
   const { items } = useCartStore((state) => state)
@@ -28,13 +28,13 @@ export function Nav({ children }: { children: ReactNode }) {
     <nav className="bg-primary text-primary-foreground flex justify-center px-4 py-3">
       <div>{children}</div>
 
-      <div className="flex flex-row mt-auto ml-auto relative cursor-pointer items-center">
+      <div className="flex flex-row mt-auto ml-auto relative cursor-pointer items-center text-white">
         <div className="mr-4">
           <SignedOut>
             <SignInButton mode="modal" />
           </SignedOut>
           <SignedIn>
-            <UserButton />
+            <UserButton showName />
           </SignedIn>
         </div>
         <div onClick={goToCart}>
