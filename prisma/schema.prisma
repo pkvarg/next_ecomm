@@ -43,6 +43,7 @@ model User {
 
 model Order {
   id               String   @id @default(uuid())
+  orderNumber String
   pricePaidInCents Int
   productTotalsPrice Int
   postage Int
@@ -52,6 +53,8 @@ model Order {
   userEmail String
   userInfo Json
   products Json
+  isCancelled Boolean @default(false)
+  isCancelledOrderNumberUsed Boolean @default(false)
 }
 
 // model OrderLegacy {

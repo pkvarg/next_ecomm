@@ -55,7 +55,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
   return (
     <div className="text-black flex flex-col lg:flex-row mx-2 gap-8 lg:mx-[5%]">
       <div className="w-[65%]">
-        <h1>Your order {orderId} </h1>
+        <h1>Your order: {order.orderNumber} </h1>
         <div className="flex flex-col gap-1 mt-4">
           <h2 className="font-bold">Shipping Info:</h2>
 

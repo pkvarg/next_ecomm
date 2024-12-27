@@ -10,6 +10,7 @@ import useShippingStore from '@/store/shippingStore'
 import { createNewOrder } from '@/actions/orders'
 import { Order } from '../../../../types/types'
 import { userEmail } from '@/lib/saveUserEmail'
+import { getOrderNumber } from '@/lib/orderNumber'
 
 const PlaceOrder = () => {
   // TODO agree Tick form
@@ -39,10 +40,10 @@ const PlaceOrder = () => {
   const totalWithTaxInCents = roundUpToNearestTenth(total + taxFromTotal) * 100
   const totalWithTax = roundUpToNearestTenth(total + taxFromTotal).toFixed(2)
 
-  //const userId = 'f1cb8ed7-e0cf-4536-bfbf-f3b8fcc25b13' // will come from login state
   const user = userEmail()
 
   const newOrder: Order = {
+    orderNumber: '',
     pricePaidInCents: totalWithTaxInCents,
     productTotalsPrice: totalItemsPrice,
     postage: parseInt(postage),

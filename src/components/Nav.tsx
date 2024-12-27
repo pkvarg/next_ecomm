@@ -13,7 +13,6 @@ import { saveEmail } from '@/lib/saveUserEmail'
 
 export function Nav({ children }: { children: ReactNode }) {
   const userId = useUser().user?.id
-  console.log('nv userId', userId)
 
   useEffect(() => {
     if (userId) {

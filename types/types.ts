@@ -41,6 +41,7 @@ export interface ShippingInfo {
 
 export interface Order {
   id?: string
+  orderNumber: string
   pricePaidInCents: number
   productTotalsPrice: number
   postage: number

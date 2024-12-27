@@ -5,13 +5,17 @@ import OrderHistoryEmail from '@/email/OrderHistory'
 import { Resend } from 'resend'
 import { z } from 'zod'
 import { Order, Product } from '../../types/types'
+import { getOrderNumber } from '@/lib/orderNumber'
 
 const emailSchema = z.string().email()
 const resend = new Resend(process.env.RESEND_API_KEY as string)
 
 export async function createNewOrder(newOrder: Order) {
+  const orderNumber = await getOrderNumber()
+
   const order = await db.order.create({
     data: {
+      orderNumber,
       pricePaidInCents: newOrder.pricePaidInCents,
       productTotalsPrice: newOrder.productTotalsPrice,
       postage: newOrder.postage,
