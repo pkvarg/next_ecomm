@@ -22,7 +22,7 @@ function getUsers() {
     select: {
       id: true,
       email: true,
-      orders: { select: { pricePaidInCents: true } },
+      //orders: { select: { pricePaidInCents: true } },
     },
     orderBy: { createdAt: 'desc' },
   })
@@ -49,8 +49,8 @@ async function UsersTable() {
           <TableHead>Email</TableHead>
           <TableHead>Orders</TableHead>
           <TableHead>Value</TableHead>
-          <TableHead className='w-0'>
-            <span className='sr-only'>Actions</span>
+          <TableHead className="w-0">
+            <span className="sr-only">Actions</span>
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -58,18 +58,15 @@ async function UsersTable() {
         {users.map((user) => (
           <TableRow key={user.id}>
             <TableCell>{user.email}</TableCell>
-            <TableCell>{formatNumber(user.orders.length)}</TableCell>
-            <TableCell>
-              {formatCurrency(
-                user.orders.reduce((sum, o) => o.pricePaidInCents + sum, 0) /
-                  100
-              )}
-            </TableCell>
-            <TableCell className='text-center'>
+            {/* <TableCell>{formatNumber(user.orders.length)}</TableCell> */}
+            {/* <TableCell>
+              {formatCurrency(user.orders.reduce((sum, o) => o.pricePaidInCents + sum, 0) / 100)}
+            </TableCell> */}
+            <TableCell className="text-center">
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <MoreVertical />
-                  <span className='sr-only'>Actions</span>
+                  <span className="sr-only">Actions</span>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DeleteDropDownItem id={user.id} />

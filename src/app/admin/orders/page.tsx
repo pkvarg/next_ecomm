@@ -29,7 +29,7 @@ function getOrders() {
       tax: true,
       createdAt: true,
       updatedAt: true,
-      userId: true,
+      userEmail: true,
       userInfo: true,
       products: true,
     },
