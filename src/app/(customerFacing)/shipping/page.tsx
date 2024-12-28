@@ -16,6 +16,7 @@ const ShippingPage = () => {
 
   const onSubmit = (data: object) => {
     setShippingInfo(data)
+    router.push('/payment-type')
   }
 
   React.useEffect(() => {
@@ -162,7 +163,6 @@ const ShippingPage = () => {
 
           <button
             type="submit"
-            onClick={() => router.push('/payment-type')}
             className="bg-blue-500 text-gray-50 p-2 w-fit cursor-pointer hover:bg-blue-800 mt-8 ml-auto"
           >
             Continue to Payment Info &#8594;

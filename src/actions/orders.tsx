@@ -12,6 +12,9 @@ const resend = new Resend(process.env.RESEND_API_KEY as string)
 
 export async function createNewOrder(newOrder: Order) {
   const orderNumber = await getOrderNumber()
+  const subscriber = newOrder.newsletter
+  // User check if subscriber and update
+  // User add order to order array
 
   const order = await db.order.create({
     data: {
@@ -19,7 +22,7 @@ export async function createNewOrder(newOrder: Order) {
       pricePaidInCents: newOrder.pricePaidInCents,
       productTotalsPrice: newOrder.productTotalsPrice,
       postage: newOrder.postage,
-      tax: newOrder.postage,
+      tax: newOrder.tax,
       userEmail: newOrder.userEmail,
       userInfo: JSON.parse(JSON.stringify(newOrder.userInfo)), // Ensure JSON-compatible
       products: JSON.parse(JSON.stringify(newOrder.products)), // Ensure JSON-compatible

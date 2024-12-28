@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ComponentProps, ReactNode, useEffect } from 'react'
+import { ComponentProps, ReactNode, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { IoCartOutline } from 'react-icons/io5'
 import useCartStore from '@/store/cartStore'
@@ -33,11 +33,23 @@ export function Nav({ children }: { children: ReactNode }) {
     router.push('/cart')
   }
 
-  return (
-    <nav className="bg-primary text-primary-foreground flex justify-center px-4 py-3">
-      <div>{children}</div>
+  const [menuOpen, setMenuOpen] = useState(false)
 
-      <div className="flex flex-row mt-auto ml-auto relative cursor-pointer items-center text-white">
+  return (
+    <nav className="bg-primary text-primary-foreground flex justify-center px-4 relative py-3 md:py-0">
+      {/* Desktop View */}
+      <div className="hidden md:flex">{children}</div>
+
+      {/* Mobile Menu Button */}
+      <div
+        className="flex md:hidden items-center cursor-pointer"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        <div className="text-3xl">☰</div>
+      </div>
+      {/* <div>{children}</div> */}
+
+      <div className="flex flex-row ml-auto relative cursor-pointer items-center text-white">
         <div className="mr-4">
           <SignedOut>
             <SignInButton mode="modal" />
@@ -48,23 +60,17 @@ export function Nav({ children }: { children: ReactNode }) {
         </div>
         <div onClick={goToCart}>
           <IoCartOutline className="text-[25px]" />
-          <p className="text-white absolute -right-[5px]  -top-[5px]">
+          <p className="text-white absolute -right-[5px] -top-[5px] md:top-[5px]">
             <span className="px-[5px] bg-red-600 rounded-2xl">{items.length}</span>
           </p>
         </div>
-
-        {/* <p>{user.full_name}</p> */}
-
-        {/* <input
-          className='border ml-2 text-black'
-          type='text'
-          onChange={(e: any) => {
-            updateUser({
-              full_name: e.target.value,
-            })
-          }}
-        />  */}
       </div>
+      {/* Mobile Menu Dropdown */}
+      {menuOpen && (
+        <div className="absolute top-full left-0 w-full bg-primary shadow-lg md:hidden z-50">
+          <div className="flex flex-col space-y-3 p-4">{children}</div>
+        </div>
+      )}
     </nav>
   )
 }

@@ -1,6 +1,7 @@
 import { getOrderById } from '@/actions/orders'
 import React from 'react'
 import { Order as OrderType, ShippingInfo, Product } from '../../../../../types/types'
+//import { Order as OrderType } from '@prisma/client'
 import Image from 'next/image'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
@@ -120,7 +121,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
           ))}
         </div>
       </div>
-      <div className="mt-0 bg-gray-100 h-fit w-[35%] lg:mt-8 p-4 font-bold">
+      <div className="mt-0 bg-gray-100 h-fit md:w-[35%] lg:mt-8 p-4 font-bold">
         <h1>Totals:</h1>
         <p>Products: {formatCurrency(order.productTotalsPrice)}</p>
         <p>Postage: {formatCurrency(order.postage)}</p>

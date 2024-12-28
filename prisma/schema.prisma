@@ -45,9 +45,9 @@ model Order {
   id               String   @id @default(uuid())
   orderNumber String
   pricePaidInCents Int
-  productTotalsPrice Int
-  postage Int
-  tax Int
+  productTotalsPrice Float
+  postage Float
+  tax Float
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   userEmail String
@@ -55,6 +55,7 @@ model Order {
   products Json
   isCancelled Boolean @default(false)
   isCancelledOrderNumberUsed Boolean @default(false)
+  newsletter Boolean @default(false)
 }
 
 // model OrderLegacy {

@@ -10,7 +10,7 @@ import useShippingStore from '@/store/shippingStore'
 import { createNewOrder } from '@/actions/orders'
 import { Order } from '../../../../types/types'
 import { userEmail } from '@/lib/saveUserEmail'
-import { getOrderNumber } from '@/lib/orderNumber'
+import { FaRegFile } from 'react-icons/fa'
 
 const PlaceOrder = () => {
   // TODO agree Tick form
@@ -24,30 +24,30 @@ const PlaceOrder = () => {
   const { items } = useCartStore((state) => state)
   const { shippingInfo } = useShippingStore()
 
-  function roundUpToNearestTenth(price: number) {
-    return Math.ceil(price * 10) / 10
-  }
-
   const totalItemsQty = items.map((item) => item.qty).reduce((total, qty) => total + qty, 0) // Sum them up
 
   const totalItemsPrice =
     items.reduce((total, item) => total + item.priceInCents * item.qty, 0) / 100
 
-  const postage = process.env.NEXT_PUBLIC_POSTAGE! // will depend on country
+  const isThereNoFileProd = items.some((prod) => prod.filePath && prod.filePath.trim() !== '')
+
+  const postage = isThereNoFileProd ? process.env.NEXT_PUBLIC_POSTAGE! : '0' // will depend on country
   const tax = process.env.NEXT_PUBLIC_TAX!
-  const total = totalItemsPrice + 5
-  const taxFromTotal = (total * 25) / 100
-  const totalWithTaxInCents = roundUpToNearestTenth(total + taxFromTotal) * 100
-  const totalWithTax = roundUpToNearestTenth(total + taxFromTotal).toFixed(2)
+  const total = totalItemsPrice + parseInt(postage)
+  const taxCalc = (total * parseInt(tax)) / 100
+  const taxFromTotal = Number(taxCalc.toFixed(2))
+  const totalWithTax = (total + taxFromTotal).toFixed(2)
+  const totalWithTaxInCents = parseFloat(totalWithTax) * 100
 
   const user = userEmail()
 
   const newOrder: Order = {
     orderNumber: '',
+    newsletter: agreeNewsletter,
     pricePaidInCents: totalWithTaxInCents,
     productTotalsPrice: totalItemsPrice,
     postage: parseInt(postage),
-    tax: parseInt(tax),
+    tax: taxFromTotal,
     userEmail: user!,
     userInfo: shippingInfo,
     products: items,
@@ -140,9 +140,14 @@ const PlaceOrder = () => {
               </div>
 
               <div className="flex flex-col mt-2">
-                <CardTitle>{item.name}</CardTitle>
+                <div className="flex flex-row justify-between gap-4">
+                  <CardTitle>{item.name}</CardTitle>
+                  {!item.filePath && <FaRegFile className="text-[25px]" />}
+                </div>
                 <CardDescription>
-                  <span className="line-clamp-4">{item.description}</span>
+                  <span className="line-clamp-4 mt-2 max-w-[90%] text-justify">
+                    {item.description}
+                  </span>
 
                   {formatCurrency(item.priceInCents / 100)}
                 </CardDescription>
@@ -162,8 +167,11 @@ const PlaceOrder = () => {
           <div className="mx-4 my-4">
             <p className="font-bold mt-2">Total Items: ({totalItemsQty})</p>
             <p className="font-bold mt-2">Products: {totalItemsPrice}&#8364;</p>
-            <p className="font-bold mt-2">Postage: {totalItemsQty && postage}&#8364;</p>
-            <p className="font-bold mt-2">Tax: {totalItemsQty && tax}%</p>
+            {isThereNoFileProd && (
+              <p className="font-bold mt-2">Postage: {totalItemsQty && postage}&#8364;</p>
+            )}
+
+            <p className="font-bold mt-2">Tax: {totalItemsQty && taxFromTotal.toFixed(2)}&#8364;</p>
             <p className="font-bold mt-2">Total: {totalItemsQty && totalWithTax}&#8364;</p>
             <div className="h-[1px] bg-gray-400 w-full my-2"></div>
 
@@ -177,7 +185,10 @@ const PlaceOrder = () => {
                   required
                 />
                 I agree with{' '}
-                <span onClick={() => router.push('/terms')} className="underline cursor-pointer">
+                <span
+                  onClick={() => router.push('/terms')}
+                  className="underline cursor-pointer text-[12.5px] mt-[2.5px]"
+                >
                   Terms and Conditions
                 </span>
               </div>
@@ -189,9 +200,12 @@ const PlaceOrder = () => {
                   onChange={() => setAgreeGdpr((prev) => !prev)}
                   className="w-[20px]"
                   required
-                />
+                />{' '}
                 I agree with{' '}
-                <span onClick={() => router.push('/gdpr')} className="underline cursor-pointer">
+                <span
+                  onClick={() => router.push('/gdpr')}
+                  className="underline cursor-pointer text-[12.5px] mt-[2.5px]"
+                >
                   GDPR
                 </span>
               </div>

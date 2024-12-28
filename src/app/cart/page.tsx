@@ -22,6 +22,8 @@ const Cart = () => {
 
   const { items, updateItemQty, removeFromCart } = useCartStore((state) => state)
 
+  const isThereNoFileProd = items.some((prod) => prod.filePath && prod.filePath.trim() !== '')
+
   const increment = (id: string, qty: number) => {
     updateItemQty(id, qty + 1)
   }
@@ -32,21 +34,16 @@ const Cart = () => {
     } else updateItemQty(id, 1)
   }
 
-  function roundUpToNearestTenth(price: number) {
-    return Math.ceil(price * 10) / 10
-  }
-
   const totalItemsQty = items.map((item) => item.qty).reduce((total, qty) => total + qty, 0) // Sum them up
 
   const totalItemsPrice =
     items.reduce((total, item) => total + item.priceInCents * item.qty, 0) / 100
 
-  // TODO postage, tax to .env
-  const postage = process.env.NEXT_PUBLIC_POSTAGE
-  const tax = process.env.NEXT_PUBLIC_TAX
-  const total = totalItemsPrice + 5
-  const taxFromTotal = (total * 25) / 100
-  const totalWithTax = roundUpToNearestTenth(total + taxFromTotal).toFixed(2)
+  const postage = isThereNoFileProd ? process.env.NEXT_PUBLIC_POSTAGE! : '0'
+  const tax = process.env.NEXT_PUBLIC_TAX!
+  const total = totalItemsPrice + parseInt(postage)
+  const taxFromTotal = (total * parseInt(tax)) / 100
+  const totalWithTax = (total + taxFromTotal).toFixed(2)
 
   return (
     <div>
@@ -57,7 +54,7 @@ const Cart = () => {
       </Nav>
       <h1 className="text-center my-4 text-[32px]">Your Cart</h1>
       <div className="flex flex-col lg:flex-row gap-4 mx-4 lg:mx-[10%]">
-        <div className="flex flex-col lg:w-[75%]">
+        <div className="flex flex-col lg:w-[75%] mx-4">
           {items.length === 0 && (
             <div className="flex flex-col justify-center items-center mt-16">
               <h1 className="text-[25px] text-center">Your Cart is Empty</h1>
@@ -89,7 +86,9 @@ const Cart = () => {
                 </div>
 
                 <CardDescription>
-                  <span className="line-clamp-4">{item.description}</span>
+                  <span className="line-clamp-4 mt-2 text-justify max-w-[90%]">
+                    {item.description}
+                  </span>
 
                   {formatCurrency(item.priceInCents / 100)}
                 </CardDescription>
@@ -128,8 +127,11 @@ const Cart = () => {
           <div className="mx-4 my-4">
             <p className="font-bold mt-2">Total Items: ({totalItemsQty})</p>
             <p className="font-bold mt-2">Products: {totalItemsPrice}&#8364;</p>
-            <p className="font-bold mt-2">Postage: {totalItemsQty && postage}&#8364;</p>
-            <p className="font-bold mt-2">Tax: {totalItemsQty && tax}%</p>
+            {isThereNoFileProd && (
+              <p className="font-bold mt-2">Postage: {totalItemsQty && postage}&#8364;</p>
+            )}
+
+            <p className="font-bold mt-2">Tax: {totalItemsQty && taxFromTotal.toFixed(2)}&#8364;</p>
             <p className="font-bold mt-2">Total: {totalItemsQty && totalWithTax}&#8364;</p>
             <button
               onClick={goToShipping}
@@ -149,29 +151,5 @@ const Cart = () => {
     </div>
   )
 }
-
-// export function ProductCardSkeleton() {
-//   return (
-//     <Card className='overflow-hidden flex flex-col animate-pulse'>
-//       <div className='w-full aspect-video bg-gray-300' />
-//       <CardHeader>
-//         <CardTitle>
-//           <div className='w-3/4 h-6 rounded-full bg-gray-300' />
-//         </CardTitle>
-//         <CardDescription>
-//           <div className='w-1/2 h-4 rounded-full bg-gray-300' />
-//         </CardDescription>
-//       </CardHeader>
-//       <CardContent className='space-y-2'>
-//         <div className='w-full h-4 rounded-full bg-gray-300' />
-//         <div className='w-full h-4 rounded-full bg-gray-300' />
-//         <div className='w-3/4 h-4 rounded-full bg-gray-300' />
-//       </CardContent>
-//       <CardFooter>
-//         <Button className='w-full' disabled size='lg'></Button>
-//       </CardFooter>
-//     </Card>
-//   )
-// }
 
 export default Cart
