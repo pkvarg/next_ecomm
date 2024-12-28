@@ -1,7 +1,7 @@
 import { getOrderById } from '@/actions/orders'
 import React from 'react'
 import { Order as OrderType, ShippingInfo, Product } from '../../../../../types/types'
-//import { Order as OrderType } from '@prisma/client'
+
 import Image from 'next/image'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'

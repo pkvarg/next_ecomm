@@ -55,14 +55,15 @@ const PlaceOrder = () => {
 
   const placeOrder = async (e: any) => {
     e.preventDefault()
+    const orderId = await createNewOrder(newOrder)
     // ...logic cash or stripe
     if (shippingInfo.payment_type === 'stripe') {
       console.log('payment type', shippingInfo.payment_type)
-    } else {
-      // call create order that is reusable for stripe as well
-      //router.push('/')
-      const orderId = await createNewOrder(newOrder)
 
+      if (orderId) {
+        router.push(`/pay-stripe/${orderId}`)
+      }
+    } else {
       if (orderId) {
         router.push(`/order/${orderId}`)
       }

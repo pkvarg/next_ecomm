@@ -11,6 +11,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
+//import { Order } from '@prisma/client'
+import { Order } from '../../../../../../../types/types'
 import {
   Elements,
   LinkAuthenticationElement,
@@ -23,39 +25,44 @@ import Image from 'next/image'
 import { FormEvent, useState } from 'react'
 
 type CheckoutFormProps = {
-  product: {
-    id: string
-    imagePath: string
-    name: string
-    priceInCents: number
-    description: string
-  }
+  order: Order
   clientSecret: string
 }
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string)
 
-export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
+export function CheckoutForm({ order, clientSecret }: CheckoutFormProps) {
   return (
     <div className="max-w-5xl w-full mx-auto space-y-8">
       <div className="flex gap-4 items-center">
         <div className="aspect-video flex-shrink-0 w-1/3 relative">
-          <Image src={product.imagePath} fill alt={product.name} className="object-cover" />
+          {/* <Image src={product.imagePath} fill alt={product.name} className="object-cover" /> */}
+          <Image src={'/next_ecom_logo.webp'} fill alt={'next_ecom'} className="object-cover" />
         </div>
         <div>
-          <div className="text-lg">{formatCurrency(product.priceInCents / 100)}</div>
+          {/* <div className="text-lg">{formatCurrency(product.priceInCents / 100)}</div>
           <h1 className="text-2xl font-bold">{product.name}</h1>
-          <div className="line-clamp-3 text-muted-foreground">{product.description}</div>
+          <div className="line-clamp-3 text-muted-foreground">{product.description}</div> */}
+          <h1 className="text-2xl font-bold">Your order</h1>
+          <h2 className="text-xl">{order.orderNumber}</h2>
+          <h3 className="text-xl">{order.products.length} items</h3>
+          {order.products.map((prod) => (
+            <p className="text-xl" key={prod.id}>
+              Products:{prod.qty} x {prod.name}
+            </p>
+          ))}
+
+          <div className="text-lg">Total: {formatCurrency(order.pricePaidInCents / 100)}</div>
         </div>
       </div>
       <Elements options={{ clientSecret }} stripe={stripePromise}>
-        <Form priceInCents={product.priceInCents} productId={product.id} />
+        <Form priceInCents={order.pricePaidInCents} orderId={order.id!} />
       </Elements>
     </div>
   )
 }
 
-function Form({ priceInCents, productId }: { priceInCents: number; productId: string }) {
+function Form({ priceInCents, orderId }: { priceInCents: number; orderId: string }) {
   const stripe = useStripe()
   const elements = useElements()
   const [isLoading, setIsLoading] = useState(false)

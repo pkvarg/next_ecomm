@@ -20,7 +20,7 @@ const ResetStoreButton = () => {
       onClick={reset}
       className="bg-blue-500 text-gray-50 p-2 mt-2 w-full cursor-pointer hover:bg-blue-800"
     >
-      Create new Order
+      Create new Order / Leave
     </button>
   )
 }
