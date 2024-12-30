@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import { IoCartOutline } from 'react-icons/io5'
 import useCartStore from '@/store/cartStore'
 import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/nextjs'
-import { getUserEmail } from '@/app/actions/getUserEmail'
+import { getUserEmail, log } from '@/app/actions/userActions'
 import { saveEmail } from '@/lib/saveUserEmail'
 
 export function Nav({ children }: { children: ReactNode }) {
@@ -18,6 +18,7 @@ export function Nav({ children }: { children: ReactNode }) {
     if (userId) {
       const userEmail = async () => {
         const email = await getUserEmail(userId)
+        await log(email)
         saveEmail(email)
       }
       userEmail()

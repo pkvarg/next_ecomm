@@ -53,17 +53,6 @@ export default async function PurchasePage({ params }: { params: Promise<{ order
     products,
   }
 
-  console.log('stripe', order.pricePaidInCents)
-
-  const payproduct = {
-    id: '001',
-    //priceInCents: 1000,
-    priceInCents: order.pricePaidInCents,
-    name: 'this prod',
-    imagePath: '/products/6b19365d-9f5b-4097-bb5f-cdae451b6010-server.png',
-    description: 'test prod',
-  }
-
   const paymentIntent = await stripe.paymentIntents.create({
     amount: order.pricePaidInCents,
     currency: 'EUR',

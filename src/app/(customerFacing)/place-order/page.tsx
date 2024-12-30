@@ -11,6 +11,7 @@ import { createNewOrder } from '@/actions/orders'
 import { Order } from '../../../../types/types'
 import { userEmail } from '@/lib/saveUserEmail'
 import { FaRegFile } from 'react-icons/fa'
+import { userActivity } from '@/app/actions/userActions'
 
 const PlaceOrder = () => {
   // TODO agree Tick form
@@ -55,19 +56,20 @@ const PlaceOrder = () => {
 
   const placeOrder = async (e: any) => {
     e.preventDefault()
-    const orderId = await createNewOrder(newOrder)
-    // ...logic cash or stripe
-    if (shippingInfo.payment_type === 'stripe') {
-      console.log('payment type', shippingInfo.payment_type)
+    const order = await createNewOrder(newOrder)
+    const orderId = order.id
+    await userActivity(order)
 
-      if (orderId) {
-        router.push(`/pay-stripe/${orderId}`)
-      }
-    } else {
-      if (orderId) {
-        router.push(`/order/${orderId}`)
-      }
-    }
+    // ...logic cash or stripe
+    // if (shippingInfo.payment_type === 'stripe') {
+    //   if (orderId) {
+    //     router.push(`/pay-stripe/${orderId}`)
+    //   }
+    // } else {
+    //   if (orderId) {
+    //     router.push(`/order/${orderId}`)
+    //   }
+    // }
   }
 
   return (

@@ -31,7 +31,7 @@ export async function createNewOrder(newOrder: Order) {
 
   await updateProductCountInStockAndAvailability(newOrder.products)
 
-  return order.id
+  return order
 }
 
 async function updateProductCountInStockAndAvailability(products: Product[]) {
