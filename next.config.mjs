@@ -15,6 +15,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'ethical-bonefish-42.accounts.dev',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
     ],
   },
 }

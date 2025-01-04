@@ -15,34 +15,43 @@ const addSchema = z.object({
   description: z.string().min(1),
   priceInCents: z.coerce.number().int().min(1),
   countInStock: z.coerce.number().int().min(0),
-  file: z.instanceof(File).optional().or(z.null()),
-  image: imageSchema.refine((file) => file.size > 0, 'Required'),
+  // file: z.instanceof(File).optional().or(z.null()),
+  // image: imageSchema.refine((file) => file.size > 0, 'Required'),
+  image: z.string().url(), // Accept URL instead of File
+  file: z.string().optional(), // Optional for files
 })
 
 export async function addProduct(prevState: unknown, formData: FormData) {
   const result = addSchema.safeParse(Object.fromEntries(formData.entries()))
+  console.log('here add', result)
   if (result.success === false) {
     return result.error.formErrors.fieldErrors
   }
 
   const data = result.data
 
-  await fs.mkdir('products', { recursive: true })
+  // CLOUDINARY
+  const filePath = data.file ? `${data.file}` : null
+  const imagePath = `${data.image}`
 
-  const filePath =
-    data.file && data.file.size > 0 ? `products/${crypto.randomUUID()}-${data.file.name}` : null
+  // CLOUDINARY
 
-  if (filePath && data.file) {
-    await fs.writeFile(filePath, new Uint8Array(Buffer.from(await data.file.arrayBuffer())))
-  }
+  // await fs.mkdir('products', { recursive: true })
 
-  await fs.mkdir('public/products', { recursive: true })
-  const imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`
+  // const filePath =
+  //   data.file && data.file.size > 0 ? `products/${crypto.randomUUID()}-${data.file.name}` : null
 
-  await fs.writeFile(
-    `public${imagePath}`,
-    new Uint8Array(Buffer.from(await data.image.arrayBuffer())),
-  )
+  // if (filePath && data.file) {
+  //   await fs.writeFile(filePath, new Uint8Array(Buffer.from(await data.file.arrayBuffer())))
+  // }
+
+  // await fs.mkdir('public/products', { recursive: true })
+  // const imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`
+
+  // await fs.writeFile(
+  //   `public${imagePath}`,
+  //   new Uint8Array(Buffer.from(await data.image.arrayBuffer())),
+  // )
 
   await db.product.create({
     data: {
@@ -64,12 +73,15 @@ export async function addProduct(prevState: unknown, formData: FormData) {
 }
 
 const editSchema = addSchema.extend({
-  file: fileSchema.optional(),
-  image: imageSchema.optional(),
+  // file: fileSchema.optional(),
+  // image: imageSchema.optional(),
+  image: z.string().url(), // Accept URL instead of File
+  file: z.string().optional(), // Optional for files
 })
 
 export async function updateProduct(id: string, prevState: unknown, formData: FormData) {
   const result = editSchema.safeParse(Object.fromEntries(formData.entries()))
+  console.log('update res', result)
   if (result.success === false) {
     return result.error.formErrors.fieldErrors
   }
@@ -79,25 +91,40 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
 
   if (product == null) return notFound()
 
+  // CLOUDINARY
   let filePath = product.filePath
-  if (data.file != null && data.file.size > 0 && product.filePath) {
-    await fs.unlink(product.filePath)
-    filePath = `products/${crypto.randomUUID()}-${data.file.name}`
-    // await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()))
-    await fs.writeFile(filePath, new Uint8Array(Buffer.from(await data.file.arrayBuffer())))
+
+  if (data.file != null && product.filePath) {
+    filePath = `{data.file}`
   }
 
   let imagePath = product.imagePath
 
-  if (data.image != null && data.image.size > 0) {
-    await fs.unlink(`public${product.imagePath}`)
-    imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`
-    // await fs.writeFile(`public${imagePath}`, Buffer.from(await data.image.arrayBuffer()))
-    await fs.writeFile(
-      `public${imagePath}`,
-      new Uint8Array(Buffer.from(await data.image.arrayBuffer())),
-    )
+  if (data.image != null) {
+    imagePath = `${data.image}`
   }
+
+  // CLOUDINARY
+
+  // let filePath = product.filePath
+  // if (data.file != null && data.file.size > 0 && product.filePath) {
+  //   await fs.unlink(product.filePath)
+  //   filePath = `products/${crypto.randomUUID()}-${data.file.name}`
+  //   // await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()))
+  //   await fs.writeFile(filePath, new Uint8Array(Buffer.from(await data.file.arrayBuffer())))
+  // }
+
+  // let imagePath = product.imagePath
+
+  // if (data.image != null && data.image.size > 0) {
+  //   await fs.unlink(`public${product.imagePath}`)
+  //   imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`
+  //   // await fs.writeFile(`public${imagePath}`, Buffer.from(await data.image.arrayBuffer()))
+  //   await fs.writeFile(
+  //     `public${imagePath}`,
+  //     new Uint8Array(Buffer.from(await data.image.arrayBuffer())),
+  //   )
+  // }
 
   await db.product.update({
     where: { id },

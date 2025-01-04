@@ -10,15 +10,33 @@ import { addProduct, updateProduct } from '../../_actions/products'
 import { useFormState, useFormStatus } from 'react-dom'
 import { Product } from '@prisma/client'
 import Image from 'next/image'
+import CloudinaryImageUploader from '@/components/UploadProductsImage'
+import CloudinaryFileUploader from '@/components/UploadProductFile'
 
 export function ProductForm({ product }: { product?: Product | null }) {
   const [error, action] = useFormState(
     product == null ? addProduct : updateProduct.bind(null, product.id),
     {},
   )
-  const [priceInCents, setPriceInCents] = useState<number | undefined>(product?.priceInCents)
 
+  const [priceInCents, setPriceInCents] = useState<number | undefined>(product?.priceInCents)
   const [countInStock, setCountInStock] = useState<number | undefined>(product?.countInStock!)
+
+  // CLOUDINARY
+  const [uploadedFileUrl, setUploadedFileUrl] = useState('')
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('')
+
+  console.log('err act', error, action, uploadedFileUrl, uploadedImageUrl)
+
+  const handleUploadImageComplete = (url: string) => {
+    setUploadedImageUrl(url)
+    console.log('img', uploadedImageUrl)
+  }
+
+  const handleUploadFileComplete = (url: string) => {
+    setUploadedFileUrl(url)
+    console.log('fil', uploadedFileUrl)
+  }
 
   return (
     <form action={action} className="space-y-8">
@@ -62,7 +80,58 @@ export function ProductForm({ product }: { product?: Product | null }) {
         />
         {error.countInStock && <div className="text-destructive">{error.countInStock}</div>}
       </div>
-      <div className="space-y-2">
+
+      {product?.imagePath && uploadedImageUrl === '' && (
+        <div>
+          <label>Product Image</label>
+          <Image src={product.imagePath} height="400" width="400" alt="Product Image" />
+        </div>
+      )}
+
+      {product?.filePath && uploadedFileUrl === '' && (
+        <div>
+          <label>Product File Path</label>
+          <p>{product.filePath}</p>
+        </div>
+      )}
+
+      {/* CLOUDINARY IMAGE */}
+      <div>
+        <CloudinaryImageUploader onUploadImageComplete={handleUploadImageComplete} />
+
+        {uploadedImageUrl && (
+          <div className="mt-4">
+            <label htmlFor="image">Image Uploaded</label>
+            <Input type="hidden" id="image" name="image" value={uploadedImageUrl} />
+
+            <img
+              src={uploadedImageUrl}
+              alt="Uploaded Image to Cloudinary"
+              className="mt-2 w-64 rounded shadow"
+            />
+          </div>
+        )}
+      </div>
+      {/* CLOUDINARY FILE */}
+      <div>
+        <CloudinaryFileUploader onUploadFileComplete={handleUploadFileComplete} />
+
+        {uploadedFileUrl && (
+          <div className="mt-4">
+            <label htmlFor="file">File Uploaded</label>
+            <Input type="hidden" id="file" name="file" value={uploadedFileUrl} />
+            <img
+              src={uploadedFileUrl}
+              alt="Uploaded File to Cloudinary"
+              className="mt-2 w-64 rounded shadow"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* LOCAL SAVES --- NOT USED */}
+
+      {/* <div className="space-y-2">
         <Label htmlFor="file">File</Label>
         <Input type="file" id="file" name="file" required={false} />
         {product != null && <div className="text-muted-foreground">{product.filePath}</div>}
@@ -75,7 +144,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
           <Image src={product.imagePath} height="400" width="400" alt="Product Image" />
         )}
         {error.image && <div className="text-destructive">{error.image}</div>}
-      </div>
+      </div> */}
       <SubmitButton />
     </form>
   )
