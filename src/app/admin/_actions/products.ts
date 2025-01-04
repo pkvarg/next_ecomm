@@ -53,6 +53,7 @@ export async function addProduct(prevState: unknown, formData: FormData) {
       countInStock: data.countInStock,
       filePath,
       imagePath,
+      qty: 0,
     },
   })
 

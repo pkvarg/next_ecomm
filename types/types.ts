@@ -49,7 +49,8 @@ export interface Order {
   tax: number
   createdAt?: Date
   updatedAt?: Date
+  userId: string
   userEmail: string
-  userInfo: ShippingInfo
+  shippingInfo: ShippingInfo
   products: Product[]
 }

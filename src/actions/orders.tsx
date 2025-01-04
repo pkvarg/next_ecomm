@@ -16,6 +16,8 @@ export async function createNewOrder(newOrder: Order) {
   // User check if subscriber and update
   // User add order to order array
 
+  console.log('new order', newOrder)
+
   const order = await db.order.create({
     data: {
       orderNumber,
@@ -24,8 +26,21 @@ export async function createNewOrder(newOrder: Order) {
       postage: newOrder.postage,
       tax: newOrder.tax,
       userEmail: newOrder.userEmail,
-      userInfo: JSON.parse(JSON.stringify(newOrder.userInfo)), // Ensure JSON-compatible
-      products: JSON.parse(JSON.stringify(newOrder.products)), // Ensure JSON-compatible
+      shippingInfo: JSON.parse(JSON.stringify(newOrder.shippingInfo)), // Ensure JSON-compatible
+      user: {
+        connect: { id: newOrder.userId }, // Connect to the user placing the order
+      },
+      products: newOrder.products.map((product) => ({
+        id: product.id,
+        name: product.name,
+        priceInCents: product.priceInCents,
+        filePath: product.filePath,
+        imagePath: product.imagePath,
+        description: product.description,
+        isAvailableForPurchase: product.isAvailableForPurchase,
+        countInStock: product.countInStock,
+        qty: product.qty,
+      })),
     },
   })
 

@@ -15,55 +15,75 @@ export const getUserEmail = async (id: string) => {
   return userEmail
 }
 
-export const log = async (email: string) => {
-  await db.log.create({
-    data: {
-      email,
-    },
-  })
-}
-
-export const userActivity = async (newOrder: Order) => {
+export const logUser = async (email: string) => {
   const existingUser = await db.user.findFirst({
     where: {
-      email: newOrder.userEmail,
+      email: email,
     },
   })
-
-  // Transform newOrder into a plain JSON object
-  const serializedOrder = JSON.parse(JSON.stringify(newOrder))
 
   if (!existingUser) {
     await db.user.create({
       data: {
-        email: newOrder.userEmail,
-        orders: [serializedOrder] as Prisma.InputJsonValue[],
-        subscriber: newOrder.newsletter,
+        email: email,
+        orders: {
+          create: [], // Initialize with an empty array
+        },
       },
     })
   } else {
-    const updatedOrders = [
-      ...((existingUser.orders as Prisma.JsonArray) || []), // Ensure existing orders are treated as an array
-      serializedOrder, // Append serialized order
-    ]
-
     await db.user.update({
       where: {
-        id: existingUser.id,
+        email: email,
       },
       data: {
-        orders: updatedOrders as Prisma.InputJsonValue[], // Ensure Prisma accepts the updated array
-        subscriber: newOrder.newsletter,
+        lastLogin: new Date(),
       },
     })
   }
 }
 
-export const userOrders = async (email: string) => {
-  const user = await db.user.findFirst({
-    where: {
-      email,
-    },
-  })
-  if (user) return user.orders
-}
+// export const userActivity = async (newOrder: Order) => {
+//   const existingUser = await db.user.findFirst({
+//     where: {
+//       email: newOrder.userEmail,
+//     },
+//   })
+
+//   // Transform newOrder into a plain JSON object
+//   const serializedOrder = JSON.parse(JSON.stringify(newOrder))
+
+//   if (!existingUser) {
+//     await db.user.create({
+//       data: {
+//         email: newOrder.userEmail,
+//         orders: [serializedOrder] as Prisma.InputJsonValue[],
+//         subscriber: newOrder.newsletter,
+//       },
+//     })
+//   } else {
+//     const updatedOrders = [
+//       ...((existingUser.orders as Prisma.JsonArray) || []), // Ensure existing orders are treated as an array
+//       serializedOrder, // Append serialized order
+//     ]
+
+//     await db.user.update({
+//       where: {
+//         id: existingUser.id,
+//       },
+//       data: {
+//         orders: updatedOrders as Prisma.InputJsonValue[], // Ensure Prisma accepts the updated array
+//         subscriber: newOrder.newsletter,
+//       },
+//     })
+//   }
+// }
+
+// export const userOrders = async (email: string) => {
+//   const user = await db.user.findFirst({
+//     where: {
+//       email,
+//     },
+//   })
+//   if (user) return user.orders
+// }
