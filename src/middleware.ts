@@ -1,6 +1,15 @@
 import { clerkMiddleware, createRouteMatcher, clerkClient } from '@clerk/nextjs/server'
 
-const isProtectedRoute = createRouteMatcher(['/shipping', '/admin'])
+const isProtectedRoute = createRouteMatcher([
+  '/shipping',
+  '/orders',
+  /^\/order(\/.*)?$/,
+  '/payment-type',
+  '/place-order',
+  /^\/pay-stripe(\/.*)?$/,
+  /^\/stripe(\/.*)?$/,
+  /^\/admin(\/.*)?$/,
+])
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth()
@@ -9,22 +18,6 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (userId) {
     const user = await client.users.getUser(userId)
-    const userEmail = user.emailAddresses[0].emailAddress
-
-    // save to client side not here
-    // make API call from Nav and shipping screen where clerkClient will be used
-
-    // const existingEmail = localStorage.getItem('userEmail')
-
-    // if (existingEmail) {
-    //   // If exists, remove it
-    //   localStorage.removeItem('userEmail')
-    //   console.log('Old email removed:', existingEmail)
-    // }
-
-    // // Save new email
-    // localStorage.setItem('userEmail', userEmail)
-    // console.log('New email saved:', userEmail)
   }
 
   if (isProtectedRoute(req)) {

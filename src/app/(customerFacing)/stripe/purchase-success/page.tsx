@@ -108,7 +108,6 @@ export default async function SuccessPage({
         <h1>Your order: {order.orderNumber} </h1>
         <div className="flex flex-col gap-1 mt-4">
           <h2 className="font-bold">Shipping Info:</h2>
-
           <p>{order.shippingInfo.name}</p>
           <p>
             {order.shippingInfo.street} {order.shippingInfo.house_number}
