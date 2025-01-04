@@ -1,10 +1,6 @@
 'use server'
-
 import db from '@/db/db'
 import { clerkClient } from '@clerk/nextjs/server'
-//import { Order } from '../../../types/types'
-import { Order } from '@prisma/client'
-import { Prisma } from '@prisma/client'
 
 export const getUserEmail = async (id: string) => {
   const client = await clerkClient()
@@ -23,7 +19,7 @@ export const logUser = async (email: string) => {
   })
 
   if (!existingUser) {
-    await db.user.create({
+    const user = await db.user.create({
       data: {
         email: email,
         orders: {
@@ -31,8 +27,9 @@ export const logUser = async (email: string) => {
         },
       },
     })
+    return user
   } else {
-    await db.user.update({
+    const user = await db.user.update({
       where: {
         email: email,
       },
@@ -40,50 +37,17 @@ export const logUser = async (email: string) => {
         lastLogin: new Date(),
       },
     })
+    return user
   }
 }
 
-// export const userActivity = async (newOrder: Order) => {
-//   const existingUser = await db.user.findFirst({
-//     where: {
-//       email: newOrder.userEmail,
-//     },
-//   })
-
-//   // Transform newOrder into a plain JSON object
-//   const serializedOrder = JSON.parse(JSON.stringify(newOrder))
-
-//   if (!existingUser) {
-//     await db.user.create({
-//       data: {
-//         email: newOrder.userEmail,
-//         orders: [serializedOrder] as Prisma.InputJsonValue[],
-//         subscriber: newOrder.newsletter,
-//       },
-//     })
-//   } else {
-//     const updatedOrders = [
-//       ...((existingUser.orders as Prisma.JsonArray) || []), // Ensure existing orders are treated as an array
-//       serializedOrder, // Append serialized order
-//     ]
-
-//     await db.user.update({
-//       where: {
-//         id: existingUser.id,
-//       },
-//       data: {
-//         orders: updatedOrders as Prisma.InputJsonValue[], // Ensure Prisma accepts the updated array
-//         subscriber: newOrder.newsletter,
-//       },
-//     })
-//   }
-// }
-
-// export const userOrders = async (email: string) => {
-//   const user = await db.user.findFirst({
-//     where: {
-//       email,
-//     },
-//   })
-//   if (user) return user.orders
-// }
+export const updateUserNewsletterSubscription = async (email: string, subscriber: boolean) => {
+  await db.user.update({
+    where: {
+      email: email,
+    },
+    data: {
+      subscriber: subscriber,
+    },
+  })
+}

@@ -9,21 +9,22 @@ import { IoCartOutline } from 'react-icons/io5'
 import useCartStore from '@/store/cartStore'
 import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/nextjs'
 import { getUserEmail, logUser } from '@/app/actions/userActions'
-import { saveEmail } from '@/lib/saveUserEmail'
+import useUserStore from '@/store/userStore'
 
 export function Nav({ children }: { children: ReactNode }) {
-  const userId = useUser().user?.id
+  const clerkUserId = useUser().user?.id
+  const { addUser } = useUserStore((state) => state)
 
   useEffect(() => {
-    if (userId) {
+    if (clerkUserId) {
       const userEmail = async () => {
-        const email = await getUserEmail(userId)
-        await logUser(email)
-        saveEmail(email)
+        const clerkEmail = await getUserEmail(clerkUserId)
+        const { email, id } = await logUser(clerkEmail)
+        addUser(email, id)
       }
       userEmail()
     }
-  }, [userId])
+  }, [clerkUserId])
 
   // new cart
   const { items } = useCartStore((state) => state)

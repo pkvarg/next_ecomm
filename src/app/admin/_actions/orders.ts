@@ -12,3 +12,18 @@ export async function deleteOrder(id: string) {
 
   return order
 }
+
+export async function getAllOrders() {
+  return db.order.findMany({
+    select: {
+      id: true,
+      orderNumber: true,
+      pricePaidInCents: true,
+      userId: true,
+      userEmail: true,
+      createdAt: true,
+      //orders: { select: { pricePaidInCents: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+}

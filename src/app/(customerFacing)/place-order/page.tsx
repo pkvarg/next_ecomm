@@ -3,18 +3,17 @@ import GoBack from '@/components/GoBack'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
 import useCartStore from '@/store/cartStore'
+import useUserStore from '@/store/userStore'
+import useShippingStore from '@/store/shippingStore'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import useShippingStore from '@/store/shippingStore'
+
 import { createNewOrder } from '@/actions/orders'
 import { Order } from '../../../../types/types'
-import { userEmail } from '@/lib/saveUserEmail'
 import { FaRegFile } from 'react-icons/fa'
 
 const PlaceOrder = () => {
-  // TODO agree Tick form
-
   const router = useRouter()
 
   const [agreeGdpr, setAgreeGdpr] = useState(true)
@@ -39,8 +38,7 @@ const PlaceOrder = () => {
   const totalWithTax = (total + taxFromTotal).toFixed(2)
   const totalWithTaxInCents = parseFloat(totalWithTax) * 100
 
-  const user = userEmail()
-
+  const { email, id: userId } = useUserStore()
   const newOrder: Order = {
     orderNumber: '',
     newsletter: agreeNewsletter,
@@ -48,8 +46,8 @@ const PlaceOrder = () => {
     productTotalsPrice: totalItemsPrice,
     postage: parseInt(postage),
     tax: taxFromTotal,
-    userId: 'ebe5a134-0832-462b-b47d-c7226dd57268',
-    userEmail: user!,
+    userId,
+    userEmail: email,
     shippingInfo: shippingInfo,
     products: items,
   }
@@ -58,18 +56,17 @@ const PlaceOrder = () => {
     e.preventDefault()
     const order = await createNewOrder(newOrder)
     const orderId = order?.id
-    //await userActivity(order)
 
-    // ...logic cash or stripe
-    // if (shippingInfo.payment_type === 'stripe') {
-    //   if (orderId) {
-    //     router.push(`/pay-stripe/${orderId}`)
-    //   }
-    // } else {
-    //   if (orderId) {
-    //     router.push(`/order/${orderId}`)
-    //   }
-    // }
+    //...logic cash or stripe
+    if (shippingInfo.payment_type === 'stripe') {
+      if (orderId) {
+        router.push(`/pay-stripe/${orderId}`)
+      }
+    } else {
+      if (orderId) {
+        router.push(`/order/${orderId}`)
+      }
+    }
   }
 
   return (

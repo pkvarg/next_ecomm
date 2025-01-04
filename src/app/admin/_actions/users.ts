@@ -12,3 +12,16 @@ export async function deleteUser(id: string) {
 
   return user
 }
+
+export async function getAllUsers() {
+  return db.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      subscriber: true,
+      lastLogin: true,
+      updatedAt: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+}

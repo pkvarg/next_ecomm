@@ -6,8 +6,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import db from '@/db/db'
-import { formatCurrency, formatNumber } from '@/lib/formatters'
+
+import { formatCurrency } from '@/lib/formatters'
 import { PageHeader } from '../_components/PageHeader'
 import {
   DropdownMenu,
@@ -15,32 +15,25 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { MoreVertical } from 'lucide-react'
-import { DeleteDropDownItem } from './_components/UserActions'
+import { DeleteDropDownItem } from './_components/salesActions'
 
-function getUsers() {
-  return db.user.findMany({
-    select: {
-      id: true,
-      email: true,
-      //orders: { select: { pricePaidInCents: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  })
-}
+import { getAllOrders } from '../_actions/orders'
+import { formatDate } from '@/lib/formatters'
+import Link from 'next/link'
 
 export default function UsersPage() {
   return (
     <>
-      <PageHeader>Customers</PageHeader>
+      <PageHeader>Sales</PageHeader>
       <UsersTable />
     </>
   )
 }
 
 async function UsersTable() {
-  const users = await getUsers()
+  const orders = await getAllOrders()
 
-  if (users.length === 0) return <p>No customers found</p>
+  if (orders.length === 0) return <p>No orders found</p>
 
   return (
     <Table>
@@ -49,20 +42,26 @@ async function UsersTable() {
           <TableHead>Email</TableHead>
           <TableHead>Orders</TableHead>
           <TableHead>Value</TableHead>
+          <TableHead>Date</TableHead>
           <TableHead className="w-0">
             <span className="sr-only">Actions</span>
           </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell>{user.email}</TableCell>
-            {/* <TableCell>{formatNumber(user.orders.length)}</TableCell> */}
-            {/* <TableCell>
-              {formatCurrency(user.orders.reduce((sum, o) => o.pricePaidInCents + sum, 0) / 100)}
-            </TableCell> */}
-            <TableCell className="text-center">
+        {orders.map((order) => (
+          <TableRow key={order.id}>
+            <TableCell>{order.userEmail}</TableCell>
+
+            <TableCell>
+              <Link href={`/admin/order/${order.id}`}>
+                <button className="underline">{order.orderNumber}</button>
+              </Link>
+            </TableCell>
+            <TableCell>{formatCurrency(order.pricePaidInCents)}</TableCell>
+            <TableCell>{formatDate(order.createdAt.toISOString())}</TableCell>
+
+            {/* <TableCell className="text-center">
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <MoreVertical />
@@ -72,7 +71,7 @@ async function UsersTable() {
                   <DeleteDropDownItem id={user.id} />
                 </DropdownMenuContent>
               </DropdownMenu>
-            </TableCell>
+            </TableCell> */}
           </TableRow>
         ))}
       </TableBody>

@@ -30,7 +30,7 @@ function getOrders() {
       createdAt: true,
       updatedAt: true,
       userEmail: true,
-      userInfo: true,
+      shippingInfo: true,
       products: true,
     },
     orderBy: { createdAt: 'desc' },

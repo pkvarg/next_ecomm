@@ -6,6 +6,7 @@ import { Resend } from 'resend'
 import { z } from 'zod'
 import { Order, Product } from '../../types/types'
 import { getOrderNumber } from '@/lib/orderNumber'
+import { updateUserNewsletterSubscription } from '@/app/actions/userActions'
 
 const emailSchema = z.string().email()
 const resend = new Resend(process.env.RESEND_API_KEY as string)
@@ -15,8 +16,6 @@ export async function createNewOrder(newOrder: Order) {
   const subscriber = newOrder.newsletter
   // User check if subscriber and update
   // User add order to order array
-
-  console.log('new order', newOrder)
 
   const order = await db.order.create({
     data: {
@@ -30,6 +29,7 @@ export async function createNewOrder(newOrder: Order) {
       user: {
         connect: { id: newOrder.userId }, // Connect to the user placing the order
       },
+      newsletter: subscriber,
       products: newOrder.products.map((product) => ({
         id: product.id,
         name: product.name,
@@ -45,6 +45,7 @@ export async function createNewOrder(newOrder: Order) {
   })
 
   await updateProductCountInStockAndAvailability(newOrder.products)
+  await updateUserNewsletterSubscription(newOrder.userEmail, subscriber)
 
   return order
 }
@@ -94,6 +95,16 @@ export async function getOrderById(id: string) {
   })
 
   return order
+}
+
+export async function getOrderByUserId(id: string) {
+  const orders = await db.order.findMany({
+    where: {
+      userId: id,
+    },
+  })
+
+  return orders
 }
 
 export async function emailOrderHistory(
