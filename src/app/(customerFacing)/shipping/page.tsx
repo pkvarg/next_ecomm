@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import GoBack from '@/components/GoBack'
 import { useForm } from 'react-hook-form'
 import useShippingStore from '@/store/shippingStore'
-import { userEmail } from '@/lib/saveUserEmail'
 
 const ShippingPage = () => {
   const router = useRouter()
@@ -112,12 +111,6 @@ const ShippingPage = () => {
                 required
                 className="border pl-1"
               />
-              {/* <input
-                {...register('billing_address')}
-                placeholder="Address"
-                defaultValue={shippingInfo.billing_address}
-                className="border pl-1"
-              /> */}
               <input
                 {...register('billing_city')}
                 placeholder="City"

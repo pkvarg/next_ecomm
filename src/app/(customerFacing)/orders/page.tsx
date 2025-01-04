@@ -41,7 +41,7 @@ export default function MyOrdersPage() {
       }
     }
     getMyOrder()
-  }, [email])
+  }, [email, userId])
 
   return (
     <form action={action} className="max-2-xl mx-auto">

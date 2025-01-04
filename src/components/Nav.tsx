@@ -24,7 +24,7 @@ export function Nav({ children }: { children: ReactNode }) {
       }
       userEmail()
     }
-  }, [clerkUserId])
+  }, [clerkUserId, addUser])
 
   // new cart
   const { items } = useCartStore((state) => state)

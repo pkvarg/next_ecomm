@@ -36,8 +36,8 @@ export default async function PurchasePage({ params }: { params: Promise<{ order
   }
 
   // Validate and convert userInfo
-  const shippingInfo: ShippingInfo | null = isShippingInfo(orderDB.userInfo)
-    ? orderDB.userInfo
+  const shippingInfo: ShippingInfo | null = isShippingInfo(orderDB.shippingInfo)
+    ? orderDB.shippingInfo
     : null
 
   // Validate and convert products
@@ -49,7 +49,7 @@ export default async function PurchasePage({ params }: { params: Promise<{ order
 
   const order: OrderType = {
     ...orderDB,
-    userInfo: shippingInfo,
+    shippingInfo: shippingInfo,
     products,
   }
 

@@ -45,9 +45,9 @@ export default async function SuccessPage({
 
   if (orderDB == null) return notFound()
 
-  // Validate and convert userInfo
-  const shippingInfo: ShippingInfo | null = isShippingInfo(orderDB.userInfo)
-    ? orderDB.userInfo
+  // Validate and convert shippingInfo
+  const shippingInfo: ShippingInfo | null = isShippingInfo(orderDB.shippingInfo)
+    ? orderDB.shippingInfo
     : null
 
   if (!shippingInfo) {
@@ -60,7 +60,7 @@ export default async function SuccessPage({
   // Explicitly cast after validation
   const order: OrderType = {
     ...orderDB,
-    userInfo: shippingInfo, // Cast userInfo to ShippingInfo
+    shippingInfo: shippingInfo, // Cast shippingInfo to ShippingInfo
     products, // Cast products to Product[]
   }
 
@@ -109,38 +109,40 @@ export default async function SuccessPage({
         <div className="flex flex-col gap-1 mt-4">
           <h2 className="font-bold">Shipping Info:</h2>
 
-          <p>{order.userInfo.name}</p>
+          <p>{order.shippingInfo.name}</p>
           <p>
-            {order.userInfo.street} {order.userInfo.house_number}
+            {order.shippingInfo.street} {order.shippingInfo.house_number}
           </p>
-          <p>{order.userInfo.zip}</p>
-          <p>{order.userInfo.city}</p>
-          <p>{order.userInfo.country}</p>
-          <p>{order.userInfo.phone}</p>
+          <p>{order.shippingInfo.zip}</p>
+          <p>{order.shippingInfo.city}</p>
+          <p>{order.shippingInfo.country}</p>
+          <p>{order.shippingInfo.phone}</p>
         </div>
 
         <div className="flex flex-col gap-1 mt-4">
           <h2 className="font-bold">Billing Info:</h2>
 
-          <p>{order.userInfo.billing_name || order.userInfo.name}</p>
+          <p>{order.shippingInfo.billing_name || order.shippingInfo.name}</p>
           <p>
-            {order.userInfo.billing_street || order.userInfo.street}{' '}
-            {order.userInfo.billing_house_number || order.userInfo.house_number}
+            {order.shippingInfo.billing_street || order.shippingInfo.street}{' '}
+            {order.shippingInfo.billing_house_number || order.shippingInfo.house_number}
           </p>
-          <p>{order.userInfo.billing_zip || order.userInfo.zip}</p>
-          <p>{order.userInfo.billing_city || order.userInfo.city}</p>
-          <p>{order.userInfo.billing_country || order.userInfo.country}</p>
-          {order.userInfo.billing_ico && (
+          <p>{order.shippingInfo.billing_zip || order.shippingInfo.zip}</p>
+          <p>{order.shippingInfo.billing_city || order.shippingInfo.city}</p>
+          <p>{order.shippingInfo.billing_country || order.shippingInfo.country}</p>
+          {order.shippingInfo.billing_ico && (
             <>
-              <p>IČO {order.userInfo.billing_ico}</p>
-              <p>DIČ {order.userInfo.billing_dic}</p>
-              <p>IČ DPH {order.userInfo.billing_ico_dph}</p>
+              <p>IČO {order.shippingInfo.billing_ico}</p>
+              <p>DIČ {order.shippingInfo.billing_dic}</p>
+              <p>IČ DPH {order.shippingInfo.billing_ico_dph}</p>
             </>
           )}
         </div>
 
         <div className="flex flex-col gap-1 mt-4">
-          <h2 className="font-bold capitalize">Payment Method: {order.userInfo.payment_type}</h2>
+          <h2 className="font-bold capitalize">
+            Payment Method: {order.shippingInfo.payment_type}
+          </h2>
         </div>
 
         <div className="flex flex-col gap-1 mt-4">

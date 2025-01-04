@@ -22,8 +22,6 @@ export default function LogsPage() {
 async function UsersTable() {
   const users = await getAllUsers()
 
-  console.log('users', users)
-
   if (users.length === 0) return <p>No logs found</p>
 
   return (
