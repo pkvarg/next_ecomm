@@ -1,11 +1,10 @@
 import { getOrderById } from '@/actions/orders'
 import React from 'react'
 import { Order as OrderType, ShippingInfo, Product } from '../../../../../types/types'
-
 import Image from 'next/image'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
-import ResetStoreButton from '@/components/ResetStoreButton'
+import UpdateOrderButton from '../../_components/UpdateOrderButton'
 
 // Type guard to ensure JsonValue is ShippingInfo
 function isShippingInfo(value: any): value is ShippingInfo {
@@ -51,12 +50,20 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
     ...orderDB,
     shippingInfo,
     products,
+    paidAt: orderDB?.paidAt || undefined,
+    sentAt: orderDB?.sentAt || undefined,
+    isCancelled: orderDB?.isCancelled,
   }
 
   return (
     <div className="text-black flex flex-col lg:flex-row mx-2 gap-8 lg:mx-[5%]">
       <div className="w-[65%]">
-        <h1>Your order: {order.orderNumber} </h1>
+        <h1 className="font-bold">Your order: {order.orderNumber} </h1>
+        {order.isCancelled && (
+          <p className="font-bold capitalize text-center text-white bg-red-500">
+            Order Cancelled: {order.isCancelled ? `Yes` : 'No'}
+          </p>
+        )}
         <div className="flex flex-col gap-1 mt-4">
           <h2 className="font-bold">Shipping Info:</h2>
 
@@ -94,6 +101,34 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
           <h2 className="font-bold capitalize">
             Payment Method: {order.shippingInfo.payment_type}
           </h2>
+          <h3 className="font-bold capitalize">
+            Payment status:{' '}
+            {order.paidAt ? (
+              <>
+                <span className="bg-green-500 text-white px-2 py-1 rounded mr-1">Paid</span>(
+                {order.paidAt.toUTCString()})
+              </>
+            ) : (
+              'Unpaid'
+            )}
+          </h3>
+          <h4 className="font-bold capitalize">
+            Order sent:{' '}
+            {order.sentAt ? (
+              <>
+                <span className="bg-green-500 text-white px-2 py-1 rounded mr-1">Sent</span>(
+                {order.sentAt.toUTCString()})
+              </>
+            ) : (
+              'Not sent'
+            )}
+          </h4>
+        </div>
+
+        <div className="my-8 flex flex-col gap-2 w-fit">
+          {!order.paidAt && <UpdateOrderButton id={orderId} action="paid" />}
+          {!order.sentAt && <UpdateOrderButton id={orderId} action="sent" />}
+          {!order.isCancelled && <UpdateOrderButton id={orderId} action="cancel" />}
         </div>
 
         <div className="flex flex-col gap-1 mt-4">
@@ -121,6 +156,9 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
               </div>
             </div>
           ))}
+          <p>Postage: {formatCurrency(order.postage)}</p>
+          <p>Tax: {formatCurrency(order.tax)}</p>
+          <p>Total: {formatCurrency(order.pricePaidInCents / 100)}</p>
         </div>
       </div>
     </div>

@@ -51,12 +51,17 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
     ...orderDB,
     shippingInfo,
     products,
+    paidAt: orderDB?.paidAt || undefined,
+    sentAt: orderDB?.sentAt || undefined,
   }
 
   return (
     <div className="text-black flex flex-col lg:flex-row mx-2 gap-8 lg:mx-[5%]">
       <div className="w-[65%]">
-        <h1>Your order: {order.orderNumber} </h1>
+        <h1 className="font-bold">Your order: {order.orderNumber} </h1>
+        {order.isCancelled && (
+          <p className="font-bold capitalize text-center text-white bg-red-500">Order Cancelled</p>
+        )}
         <div className="flex flex-col gap-1 mt-4">
           <h2 className="font-bold">Shipping Info:</h2>
 
@@ -94,6 +99,12 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
           <h2 className="font-bold capitalize">
             Payment Method: {order.shippingInfo.payment_type}
           </h2>
+          <h3 className="font-bold capitalize">
+            Payment status: {order.paidAt ? `Paid ${order?.paidAt?.toDateString()}` : 'Unpaid'}
+          </h3>
+          <h4 className="font-bold capitalize">
+            Order sent: {order.sentAt ? `Sent ${order.sentAt.toDateString()}` : 'Not sent'}
+          </h4>
         </div>
 
         <div className="flex flex-col gap-1 mt-4">

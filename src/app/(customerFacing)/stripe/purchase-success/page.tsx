@@ -1,13 +1,12 @@
-import { Button } from '@/components/ui/button'
 import db from '@/db/db'
 import { formatCurrency } from '@/lib/formatters'
 import { Order as OrderType, ShippingInfo, Product } from '../../../../../types/types'
 import Image from 'next/image'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Stripe from 'stripe'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import ResetStoreButton from '@/components/ResetStoreButton'
+import { updateOrderToPaid } from '@/actions/orders'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 // Type guard to ensure JsonValue is ShippingInfo
@@ -62,48 +61,23 @@ export default async function SuccessPage({
     ...orderDB,
     shippingInfo: shippingInfo, // Cast shippingInfo to ShippingInfo
     products, // Cast products to Product[]
+    paidAt: orderDB?.paidAt || undefined,
+    sentAt: orderDB?.sentAt || undefined,
   }
 
   // Handle payment success
   const isSuccess = paymentIntent.status === 'succeeded'
+
+  if (isSuccess) {
+    await updateOrderToPaid(paymentIntent.metadata.orderId)
+  }
 
   return (
     <div className="max-w-5xl w-full mx-auto space-y-8">
       <h1 className="text-4xl font-bold">
         {isSuccess ? 'Success, Your order has been paid!' : 'Error!'}
       </h1>
-      {/* <div className='flex gap-4 items-center'>
-        <div className='aspect-video flex-shrink-0 w-1/3 relative'>
-          <Image
-            src={product.imagePath}
-            fill
-            alt={product.name}
-            className='object-cover'
-          />
-        </div>
-        <div>
-          <div className='text-lg'>
-            {formatCurrency(product.priceInCents / 100)}
-          </div>
-          <h1 className='text-2xl font-bold'>{product.name}</h1>
-          <div className='line-clamp-3 text-muted-foreground'>
-            {product.description}
-          </div>
-          <Button className='mt-4' size='lg' asChild>
-            {isSuccess ? (
-              <a
-                href={`/products/download/${await createDownloadVerification(
-                  product.id
-                )}`}
-              >
-                Download
-              </a>
-            ) : (
-              <Link href={`/products/${product.id}/purchase`}>Try Again</Link>
-            )}
-          </Button>
-        </div>
-      </div> */}
+
       <div className="w-[65%]">
         <h1>Your order: {order.orderNumber} </h1>
         <div className="flex flex-col gap-1 mt-4">
@@ -175,14 +149,3 @@ export default async function SuccessPage({
     </div>
   )
 }
-
-// async function createDownloadVerification(productId: string) {
-//   return (
-//     await db.downloadVerification.create({
-//       data: {
-//         productId,
-//         expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
-//       },
-//     })
-//   ).id
-// }

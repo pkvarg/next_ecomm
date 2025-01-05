@@ -61,6 +61,8 @@ model Order {
   user                      User             @relation(fields: [userId], references: [id])  // Relationship to User
   userId                    String
   products Json[]
+  sentAt                    DateTime? 
+  paidAt                    DateTime? 
 }
 
 

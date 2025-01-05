@@ -53,4 +53,7 @@ export interface Order {
   userEmail: string
   shippingInfo: ShippingInfo
   products: Product[]
+  paidAt?: Date
+  sentAt?: Date
+  isCancelled: Boolean
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { userOrderExists } from '../.././../../../actions/orders'
+import { userOrderExists } from '@/app/actions/orders'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -11,8 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
-//import { Order } from '@prisma/client'
-import { Order } from '../../../../../../../types/types'
+import { Order } from '../../types/types'
 import {
   Elements,
   LinkAuthenticationElement,
@@ -36,13 +35,9 @@ export function CheckoutForm({ order, clientSecret }: CheckoutFormProps) {
     <div className="max-w-5xl w-full mx-auto space-y-8">
       <div className="flex gap-4 items-center">
         <div className="aspect-video flex-shrink-0 w-1/3 relative">
-          {/* <Image src={product.imagePath} fill alt={product.name} className="object-cover" /> */}
           <Image src={'/next_ecom_logo.webp'} fill alt={'next_ecom'} className="object-cover" />
         </div>
         <div>
-          {/* <div className="text-lg">{formatCurrency(product.priceInCents / 100)}</div>
-          <h1 className="text-2xl font-bold">{product.name}</h1>
-          <div className="line-clamp-3 text-muted-foreground">{product.description}</div> */}
           <h1 className="text-2xl font-bold">Your order</h1>
           <h2 className="text-xl">{order.orderNumber}</h2>
           <h3 className="text-xl">{order.products.length} items</h3>
@@ -75,16 +70,6 @@ function Form({ priceInCents, orderId }: { priceInCents: number; orderId: string
     if (stripe == null || elements == null || email == null) return
 
     setIsLoading(true)
-
-    // const orderExists = await userOrderExists(email, productId)
-
-    // if (orderExists) {
-    //   setErrorMessage(
-    //     'You have already purchased this product. Try downloading it from the My Orders page'
-    //   )
-    //   setIsLoading(false)
-    //   return
-    // }
 
     stripe
       .confirmPayment({

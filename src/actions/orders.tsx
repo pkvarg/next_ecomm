@@ -1,7 +1,5 @@
 'use server'
-
 import db from '@/db/db'
-import OrderHistoryEmail from '@/email/OrderHistory'
 import { Resend } from 'resend'
 import { z } from 'zod'
 import { Order, Product } from '../../types/types'
@@ -107,55 +105,44 @@ export async function getOrderByUserId(id: string) {
   return orders
 }
 
-export async function emailOrderHistory(
-  prevState: unknown,
-  formData: FormData,
-): Promise<{ message?: string; error?: string }> {
-  const result = emailSchema.safeParse(formData.get('email'))
-
-  if (result.success === false) {
-    return { error: 'Invalid email address' }
+export async function updateOrderToPaid(id: string) {
+  try {
+    await db.order.update({
+      where: { id },
+      data: {
+        paidAt: new Date(),
+      },
+    })
+    return { message: 'Order updated to paid' }
+  } catch (error) {
+    console.error('Error updating order to paid:', error)
   }
+}
 
-  const user = await db.user.findUnique({
-    where: { email: result.data },
-    select: {
-      email: true,
-    },
-  })
-
-  if (user == null) {
-    return {
-      message: 'Check your email to view your order history and download your products.',
-    }
+export async function updateOrderToSent(id: string) {
+  try {
+    await db.order.update({
+      where: { id },
+      data: {
+        sentAt: new Date(),
+      },
+    })
+    return { message: 'Order updated to sent' }
+  } catch (error) {
+    console.error('Error updating order to sent:', error)
   }
+}
 
-  // const orders = user.orders.map(async (order) => {
-  //   return {
-  //     ...order,
-  //     downloadVerificationId: (
-  //       await db.downloadVerification.create({
-  //         data: {
-  //           expiresAt: new Date(Date.now() + 24 * 1000 * 60 * 60),
-  //           productId: order.product.id,
-  //         },
-  //       })
-  //     ).id,
-  //   }
-  // })
-
-  // const data = await resend.emails.send({
-  //   from: `Support <${process.env.SENDER_EMAIL}>`,
-  //   to: user.email,
-  //   subject: 'Order History',
-  //   react: <OrderHistoryEmail orders={await Promise.all(orders)} />,
-  // })
-
-  // if (data.error) {
-  //   return { error: 'There was an error sending your email. Please try again.' }
-  // }
-
-  return {
-    message: 'Check your email to view your order history and download your products.',
+export async function updatedOrderToCanceled(id: string) {
+  try {
+    await db.order.update({
+      where: { id },
+      data: {
+        isCancelled: true,
+      },
+    })
+    return { message: 'Order updated to canceled' }
+  } catch (error) {
+    console.error('Error updating order to canceled:', error)
   }
 }

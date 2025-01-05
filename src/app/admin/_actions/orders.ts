@@ -22,7 +22,6 @@ export async function getAllOrders() {
       userId: true,
       userEmail: true,
       createdAt: true,
-      //orders: { select: { pricePaidInCents: true } },
     },
     orderBy: { createdAt: 'desc' },
   })

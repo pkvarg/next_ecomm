@@ -1,7 +1,5 @@
-import db from '@/db/db'
-import { notFound } from 'next/navigation'
 import Stripe from 'stripe'
-import { CheckoutForm } from '../../products/[id]/purchase/_components/CheckoutForm'
+import { CheckoutForm } from '@/components/CheckoutForm'
 import { getOrderById } from '@/actions/orders'
 import { Order as OrderType, ShippingInfo, Product } from '../../../../../types/types'
 
@@ -67,39 +65,8 @@ export default async function PurchasePage({ params }: { params: Promise<{ order
     <CheckoutForm
       order={{
         ...order,
-        //description: order.orderNumber || '', // Provide fallback value if description is null
       }}
       clientSecret={paymentIntent.client_secret}
     />
   )
-
-  // Calculate total price
-  // const totalPriceInCents = order.pricePaidInCents
-
-  // // Create payment intent with dynamic order data
-  // const paymentIntent = await stripe.paymentIntents.create({
-  //   amount: totalPriceInCents,
-  //   currency: 'EUR',
-  //   metadata: {
-  //     orderId: order.id!,
-  //     productNames: products.map((p) => p.name).join(', '),
-  //   },
-  // })
-
-  // if (paymentIntent.client_secret == null) {
-  //   throw Error('Stripe failed to create payment intent')
-  // }
-
-  // return (
-  //   <CheckoutForm
-  //     product={{
-  //       id: orderId,
-  //       name: 'Order Payment',
-  //       priceInCents: totalPriceInCents,
-  //       description: `Order for ${products.length} items`,
-  //       imagePath: '/products/default.png', // Optional: Generic image
-  //     }}
-  //     clientSecret={paymentIntent.client_secret}
-  //   />
-  // )
 }
