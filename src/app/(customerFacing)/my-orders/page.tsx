@@ -1,5 +1,5 @@
 'use client'
-import { getOrderByUserId } from './../../../actions/orders'
+import { getOrderByUserId } from '../../../actions/orders'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import useUserStore from '@/store/userStore'
 import { useEffect, useState } from 'react'
@@ -37,7 +37,13 @@ export default function MyOrdersPage() {
           {myOrders?.map((order: any) => (
             <div key={order.id}>
               <h1 className="font-bold mt-8">Order Number {order.orderNumber}</h1>
+
               <p>Date {formatDate(order.createdAt)}</p>
+              {order.isCancelled && (
+                <p className="font-bold capitalize text-center text-white bg-red-500">
+                  Order Cancelled: {order.isCancelled ? `Yes` : 'No'}
+                </p>
+              )}
               <div className="flex flex-col gap-1 mt-4">
                 <h2 className="font-bold">Products:</h2>
                 {order.products.map((item: any) => (
@@ -66,7 +72,19 @@ export default function MyOrdersPage() {
                   </div>
                 ))}
               </div>
-              <div className="font-bold">
+
+              <div className="flex flex-col gap-1 mt-4">
+                <h2 className="font-bold capitalize">
+                  Payment Method: {order.shippingInfo.payment_type}
+                </h2>
+                <h3 className="font-bold capitalize">
+                  Payment status: {order.paidAt ? 'Paid' : 'Unpaid'}
+                </h3>
+                <h4 className="font-bold capitalize">
+                  Order sent: {order.sentAt ? 'Sent' : 'Not sent'}
+                </h4>
+              </div>
+              <div className="font-bold mt-8">
                 <h1>Totals:</h1>
                 <p>Products: {formatCurrency(order.productTotalsPrice)}</p>
                 <p>Postage: {formatCurrency(order.postage)}</p>

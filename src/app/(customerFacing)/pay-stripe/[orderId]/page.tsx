@@ -49,6 +49,8 @@ export default async function PurchasePage({ params }: { params: Promise<{ order
     ...orderDB,
     shippingInfo: shippingInfo,
     products,
+    paidAt: orderDB?.paidAt || undefined,
+    sentAt: orderDB?.sentAt || undefined,
   }
 
   const paymentIntent = await stripe.paymentIntents.create({

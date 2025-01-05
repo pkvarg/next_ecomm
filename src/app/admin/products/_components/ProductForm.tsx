@@ -104,7 +104,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
             <label htmlFor="image">Image Uploaded</label>
             <Input type="hidden" id="image" name="image" value={uploadedImageUrl} />
 
-            <img
+            <Image
               src={uploadedImageUrl}
               alt="Uploaded Image to Cloudinary"
               className="mt-2 w-64 rounded shadow"
@@ -120,7 +120,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
           <div className="mt-4">
             <label htmlFor="file">File Uploaded</label>
             <Input type="hidden" id="file" name="file" value={uploadedFileUrl} />
-            <img
+            <Image
               src={uploadedFileUrl}
               alt="Uploaded File to Cloudinary"
               className="mt-2 w-64 rounded shadow"

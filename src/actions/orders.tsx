@@ -6,9 +6,6 @@ import { Order, Product } from '../../types/types'
 import { getOrderNumber } from '@/lib/orderNumber'
 import { updateUserNewsletterSubscription } from '@/app/actions/userActions'
 
-const emailSchema = z.string().email()
-const resend = new Resend(process.env.RESEND_API_KEY as string)
-
 export async function createNewOrder(newOrder: Order) {
   const orderNumber = await getOrderNumber()
   const subscriber = newOrder.newsletter

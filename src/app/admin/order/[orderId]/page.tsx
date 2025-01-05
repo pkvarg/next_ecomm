@@ -156,9 +156,13 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
               </div>
             </div>
           ))}
-          <p>Postage: {formatCurrency(order.postage)}</p>
-          <p>Tax: {formatCurrency(order.tax)}</p>
-          <p>Total: {formatCurrency(order.pricePaidInCents / 100)}</p>
+          <div className="font-semibold">
+            <p>Products: {formatCurrency(order.productTotalsPrice)}</p>
+            <p>Postage: {formatCurrency(order.postage)}</p>
+            <p>Tax: {formatCurrency(order.tax)}</p>
+            <div className="h-[1px] bg-black"></div>
+            <p>Total: {formatCurrency(order.pricePaidInCents / 100)}</p>
+          </div>
         </div>
       </div>
     </div>

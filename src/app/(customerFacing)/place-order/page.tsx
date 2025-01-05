@@ -50,6 +50,7 @@ const PlaceOrder = () => {
     userEmail: email,
     shippingInfo: shippingInfo,
     products: items,
+    isCancelled: false,
   }
 
   const placeOrder = async (e: any) => {
