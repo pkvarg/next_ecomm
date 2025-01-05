@@ -28,7 +28,7 @@ const PlaceOrder = () => {
   const totalItemsPrice =
     items.reduce((total, item) => total + item.priceInCents * item.qty, 0) / 100
 
-  const isThereNoFileProd = items.some((prod) => prod.filePath && prod.filePath.trim() !== '')
+  const isThereNoFileProd = items.some((prod) => prod.filePath === null)
 
   const postage = isThereNoFileProd ? process.env.NEXT_PUBLIC_POSTAGE! : '0' // will depend on country
   const tax = process.env.NEXT_PUBLIC_TAX!
@@ -143,7 +143,7 @@ const PlaceOrder = () => {
               <div className="flex flex-col mt-2">
                 <div className="flex flex-row justify-between gap-4">
                   <CardTitle>{item.name}</CardTitle>
-                  {!item.filePath && <FaRegFile className="text-[25px]" />}
+                  {item.filePath && <FaRegFile className="text-[25px]" />}
                 </div>
                 <CardDescription>
                   <span className="line-clamp-4 mt-2 max-w-[90%] text-justify">

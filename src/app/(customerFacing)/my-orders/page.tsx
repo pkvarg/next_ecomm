@@ -1,5 +1,5 @@
 'use client'
-import { getOrderByUserId } from '../../../actions/orders'
+import { getOrdersByUserId } from '../../../actions/orders'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import useUserStore from '@/store/userStore'
 import { useEffect, useState } from 'react'
@@ -12,8 +12,8 @@ export default function MyOrdersPage() {
   const { email, id: userId } = useUserStore()
 
   useEffect(() => {
-    const getMyOrder = async () => {
-      const orders = await getOrderByUserId(userId)
+    const getMyOrders = async () => {
+      const orders = await getOrdersByUserId(userId)
       if (orders) {
         const serializedOrders: JsonValue[] = orders.map((order) =>
           JSON.parse(JSON.stringify(order)),
@@ -24,7 +24,7 @@ export default function MyOrdersPage() {
         })
       }
     }
-    getMyOrder()
+    getMyOrders()
   }, [email, userId])
 
   return (

@@ -1,7 +1,5 @@
 'use server'
 import db from '@/db/db'
-import { Resend } from 'resend'
-import { z } from 'zod'
 import { Order, Product } from '../../types/types'
 import { getOrderNumber } from '@/lib/orderNumber'
 import { updateUserNewsletterSubscription } from '@/app/actions/userActions'
@@ -92,11 +90,12 @@ export async function getOrderById(id: string) {
   return order
 }
 
-export async function getOrderByUserId(id: string) {
+export async function getOrdersByUserId(id: string) {
   const orders = await db.order.findMany({
     where: {
       userId: id,
     },
+    orderBy: { createdAt: 'desc' },
   })
 
   return orders

@@ -4,7 +4,7 @@ import useCartStore from '@/store/cartStore'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
 import Image from 'next/image'
-import { Nav, NavLink } from '@/components/Nav'
+
 import { BsTrash } from 'react-icons/bs'
 import { FaRegFile } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
@@ -22,7 +22,7 @@ const Cart = () => {
 
   const { items, updateItemQty, removeFromCart } = useCartStore((state) => state)
 
-  const isThereNoFileProd = items.some((prod) => prod.filePath && prod.filePath.trim() !== '')
+  const isThereNoFileProd = items.some((prod) => prod.filePath === null)
 
   const increment = (id: string, qty: number) => {
     updateItemQty(id, qty + 1)
@@ -47,11 +47,6 @@ const Cart = () => {
 
   return (
     <div>
-      <Nav>
-        <NavLink href="/">Home</NavLink>
-        <NavLink href="/products">Products</NavLink>
-        <NavLink href="/orders">My Orders</NavLink>
-      </Nav>
       <h1 className="text-center my-4 text-[32px]">Your Cart</h1>
       <div className="flex flex-col lg:flex-row gap-4 mx-4 lg:mx-[10%]">
         <div className="flex flex-col lg:w-[75%] mx-4">
@@ -82,7 +77,7 @@ const Cart = () => {
               <div className="flex flex-col mt-2">
                 <div className="flex flex-row justify-between gap-4">
                   <CardTitle>{item.name}</CardTitle>
-                  {!item.filePath && <FaRegFile className="text-[25px]" />}
+                  {item.filePath && <FaRegFile className="text-[25px]" />}
                 </div>
 
                 <CardDescription>
@@ -92,7 +87,7 @@ const Cart = () => {
 
                   {formatCurrency(item.priceInCents / 100)}
                 </CardDescription>
-                {item.filePath ? (
+                {!item.filePath ? (
                   <div className="flex gap-4 ml-[62.5%] lg:ml-auto mt-4 items-center">
                     <p onClick={() => decrement(item.id, item.qty)} className="cursor-pointer">
                       -

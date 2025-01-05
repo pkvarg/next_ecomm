@@ -44,7 +44,7 @@ export function ProductCard(product: ProductTypes) {
       <CardHeader>
         <div className="flex flex-row justify-between">
           <CardTitle>{product.name}</CardTitle>
-          {!product.filePath && <FaRegFile className="text-[25px]" />}
+          {product.filePath && <FaRegFile className="text-[25px]" />}
         </div>
 
         <CardDescription>{formatCurrency(product.priceInCents / 100)}</CardDescription>
@@ -52,7 +52,7 @@ export function ProductCard(product: ProductTypes) {
       <CardContent className="flex-grow">
         <p className="line-clamp-4 text-left">{product.description}</p>
 
-        {product.filePath && (
+        {!product.filePath && (
           <div className="flex gap-4 flex-row justify-end mr-8">
             <p onClick={decrement} className="cursor-pointer">
               -

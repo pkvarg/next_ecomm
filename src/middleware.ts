@@ -6,6 +6,8 @@ const isProtectedRoute = createRouteMatcher([
   /^\/order(\/.*)?$/,
   '/payment-type',
   '/place-order',
+  '/my-orders',
+  '/my-downloads',
   /^\/pay-stripe(\/.*)?$/,
   /^\/stripe(\/.*)?$/,
   /^\/admin(\/.*)?$/,

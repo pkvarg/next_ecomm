@@ -107,6 +107,8 @@ export function ProductForm({ product }: { product?: Product | null }) {
             <Image
               src={uploadedImageUrl}
               alt="Uploaded Image to Cloudinary"
+              width={100}
+              height={100}
               className="mt-2 w-64 rounded shadow"
             />
           </div>
@@ -124,6 +126,8 @@ export function ProductForm({ product }: { product?: Product | null }) {
               src={uploadedFileUrl}
               alt="Uploaded File to Cloudinary"
               className="mt-2 w-64 rounded shadow"
+              width={100}
+              height={100}
             />
           </div>
         )}
