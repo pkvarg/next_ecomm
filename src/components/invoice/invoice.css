@@ -18,8 +18,13 @@ h6 {
   font-size: 18px; /* Slightly larger headings */
   margin-bottom: 8px; /* Space below headings */
   line-height: 1.1;
-  letter-spacing: 4px;
+  letter-spacing: 1px;
   /* Compact line height for headings */
+}
+
+h1 {
+  font-weight: 900;
+  font-size: 25px;
 }
 
 /* Table Styling */
@@ -39,7 +44,7 @@ table td {
 p {
   margin: 4px 0; /* Reduce paragraph margin to avoid large gaps */
   font-size: 16px; /* Consistent font size */
-  letter-spacing: 4px; /* Normal letter spacing */
+  letter-spacing: 1px; /* Normal letter spacing */
 }
 
 /* Logo Adjustments */

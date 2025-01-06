@@ -3,7 +3,7 @@ import React from 'react'
 import { jsPDF } from 'jspdf'
 import { ShippingInfo, Product } from '../../../types/types'
 import Image from 'next/image'
-import { formatCurrency } from '@/lib/formatters'
+import { formatCurrency, formatDate } from '@/lib/formatters'
 import './invoice.css'
 
 interface OrderProps {
@@ -51,15 +51,6 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
       format: 'a4', // A4 size
     })
 
-    // Fetch image data as Base64 (you might already have this from the server or directly)
-    const imageUrl = '/next_ecom_logo.webp'
-
-    // Adding the image with scaling for PDF
-    const imageWidth = 50 // width in mm (adjust accordingly)
-    const imageHeight = 50 // height in mm (adjust accordingly)
-
-    doc.addImage(imageUrl, 'WEBP', 10, 10, imageWidth, imageHeight) // Position the image on the page (x, y, width, height)
-
     // Fetch and Convert Font to Base64
     try {
       const fontBuffer = await fetch('/fonts/Roboto-Regular.ttf').then((res) => res.arrayBuffer())
@@ -106,25 +97,23 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
   }
 
   return (
-    <div className={`bg-gray-100 min-h-screen`}>
+    <div className={`bg-gray-100`}>
       <div id="invoice" className=" bg-white shadow-md rounded-lg p-6 mt-8">
         <div className="flex flex-row justify-between">
           <div>
-            <Image
+            <img
               src="/next_ecom_logo.webp"
               alt="next_ecom_logo"
-              width={250}
-              height={250}
               style={{
                 objectFit: 'fill', // Ensures the image fits the container, potentially distorting the aspect ratio
-                width: '100%',
-                height: '100%',
+                width: '225px',
+                height: '225px',
               }}
             />
           </div>
 
           <div className="text-right">
-            <h1 className="font-bold">Pictusweb s.r.o. </h1>
+            <h1>Pictusweb s.r.o. </h1>
             <h2>Nábrežná 4895/42</h2>
             <h3>940 02 Nové Zámky</h3>
             <h4>Slovenská republika</h4>
@@ -141,22 +130,29 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
             </div>
           </div>
         </div>
-        <h1 className="text-2xl font-bold my-4">Faktúra - Daňový doklad </h1>
+        <h1 className="my-4">Faktúra - Daňový doklad </h1>
         <div className="mb-4">
           <p className="text-gray-600">Faktúra: {order.orderNumber}</p>
-          <p className="text-gray-600">Dátum: {order.createdAt?.toDateString()}</p>
+          <p className="text-gray-600">Dátum: {formatDate(order.createdAt!.toLocaleString())}</p>
         </div>
         <div className="flex flex-row justify-between">
           <div>
-            <p>Dátum vystavenia: {order.createdAt?.toDateString()}</p>
-            <p>Dátum splatnosti: {addOneMonth(order.createdAt)?.toDateString()}</p>
-            <p>Spôsob platby: {order.shippingInfo.payment_type}</p>
+            <p>Dátum vystavenia: {formatDate(order.createdAt!.toLocaleString())}</p>
+            <p>Dátum splatnosti: {formatDate(addOneMonth(order.createdAt)!.toLocaleString())}</p>
+            <p>
+              Spôsob platby:{' '}
+              {order.shippingInfo.payment_type === 'bank transfer'
+                ? 'Bankovým prevodom'
+                : order.shippingInfo.payment_type === 'stripe'
+                ? 'Kartou Stripe'
+                : 'Hotovosť pri prevzatí'}
+            </p>
             {order.shippingInfo.payment_type === 'bank transfer' && (
               <p>Variabilný symbol: {order.orderNumber}</p>
             )}
           </div>
           <div className="text-right">
-            <p className="font-bold">Doručovacie údaje</p>
+            <h1 className="font-bold">Doručovacie údaje</h1>
             <p>{order.shippingInfo.name}</p>
             <p>
               {order.shippingInfo.street} {order.shippingInfo.house_number}
@@ -167,7 +163,7 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
           </div>
         </div>
         <div className="text-right my-4">
-          <p className="font-bold">Fakturačné údaje</p>
+          <h1 className="font-bold">Fakturačné údaje</h1>
           {order.shippingInfo.is_billing_address ? (
             <>
               <p>{order.shippingInfo.billing_name}</p>
@@ -177,9 +173,11 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
               <p>
                 {order.shippingInfo.billing_zip} {order.shippingInfo.billing_city}
               </p>
-              <p> {order.shippingInfo.billing_ico}</p>
-              <p> {order.shippingInfo.billing_dic}</p>
-              <p> {order.shippingInfo.billing_ico_dph}</p>
+              <p>IČO: {order.shippingInfo.billing_ico}</p>
+              <p>DIČ: {order.shippingInfo.billing_dic}</p>
+              {order.shippingInfo.billing_ico_dph && (
+                <p>IČ DPH: {order.shippingInfo.billing_ico_dph}</p>
+              )}
             </>
           ) : (
             <>
@@ -225,7 +223,7 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
 
           <p className="text-lg font-bold">Spolu: {formatCurrency(order.pricePaidInCents / 100)}</p>
         </div>
-        <div className="flex flex-col justify-center items-center mt-auto">
+        <div className="flex flex-col justify-center items-center mt-8">
           <p>Vystavil: PV</p>
           <p>Faktúra zároveň slúži ako dodací list</p>
         </div>
