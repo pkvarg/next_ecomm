@@ -1,9 +1,10 @@
 'use client'
 import React from 'react'
 import { jsPDF } from 'jspdf'
-import { ShippingInfo, Product } from '../../types/types'
+import { ShippingInfo, Product } from '../../../types/types'
 import Image from 'next/image'
 import { formatCurrency } from '@/lib/formatters'
+import './invoice.css'
 
 interface OrderProps {
   order: {
@@ -27,21 +28,74 @@ interface OrderProps {
 }
 
 const Invoice: React.FC<OrderProps> = ({ order }) => {
-  const generatePDF = () => {
+  // Helper to Convert ArrayBuffer to Base64
+  const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
+    let binary = ''
+    const bytes = new Uint8Array(buffer)
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i])
+    }
+    return btoa(binary) // Convert to Base64
+  }
+
+  const generatePDF = async () => {
     const invoiceElement = document.querySelector('#invoice') as HTMLElement // Explicitly cast to HTMLElement
     if (!invoiceElement) {
       console.error('Invoice element not found')
       return
     }
 
-    const doc = new jsPDF()
+    const doc = new jsPDF({
+      orientation: 'p', // Portrait
+      unit: 'mm',
+      format: 'a4', // A4 size
+    })
+
+    // Fetch image data as Base64 (you might already have this from the server or directly)
+    const imageUrl = '/next_ecom_logo.webp'
+
+    // Adding the image with scaling for PDF
+    const imageWidth = 50 // width in mm (adjust accordingly)
+    const imageHeight = 50 // height in mm (adjust accordingly)
+
+    doc.addImage(imageUrl, 'WEBP', 10, 10, imageWidth, imageHeight) // Position the image on the page (x, y, width, height)
+
+    // Fetch and Convert Font to Base64
+    try {
+      const fontBuffer = await fetch('/fonts/Roboto-Regular.ttf').then((res) => res.arrayBuffer())
+      const fontBase64 = arrayBufferToBase64(fontBuffer)
+
+      // Embed Font into jsPDF
+      doc.addFileToVFS('Roboto-Regular.ttf', fontBase64)
+      doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal')
+      doc.setFont('Roboto')
+    } catch (error) {
+      console.error('Failed to load font', error)
+    }
+
+    const scale = 190 / invoiceElement.offsetWidth // Scale based on width
+
     doc.html(invoiceElement, {
       callback: function (doc) {
         doc.save('invoice.pdf')
       },
-      x: 5,
-      y: 5,
+      x: 10,
+      y: 10,
+      width: 190, // A4 width
+      windowWidth: invoiceElement.offsetWidth,
+      html2canvas: {
+        scale: scale, // Scale the content
+      },
     })
+
+    // const doc = new jsPDF()
+    // doc.html(invoiceElement, {
+    //   callback: function (doc) {
+    //     doc.save('invoice.pdf')
+    //   },
+    //   x: 0,
+    //   y: 0,
+    // })
   }
 
   const addOneMonth = (date?: Date): Date | undefined => {
@@ -52,16 +106,20 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className={`bg-gray-100 min-h-screen`}>
       <div id="invoice" className=" bg-white shadow-md rounded-lg p-6 mt-8">
         <div className="flex flex-row justify-between">
           <div>
             <Image
-              src={'/next_ecom_logo.webp'}
+              src="/next_ecom_logo.webp"
               alt="next_ecom_logo"
-              width={100}
-              height={100}
-              className="w-auto h-auto"
+              width={250}
+              height={250}
+              style={{
+                objectFit: 'fill', // Ensures the image fits the container, potentially distorting the aspect ratio
+                width: '100%',
+                height: '100%',
+              }}
             />
           </div>
 
@@ -167,7 +225,7 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
 
           <p className="text-lg font-bold">Spolu: {formatCurrency(order.pricePaidInCents / 100)}</p>
         </div>
-        <div className="flex flex-col justify-center items-center mt-4">
+        <div className="flex flex-col justify-center items-center mt-auto">
           <p>Vystavil: PV</p>
           <p>Faktúra zároveň slúži ako dodací list</p>
         </div>

@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+/* General Styles */
+#invoice {
+  padding: 10px;
+  font-size: 14px; /* Increase font size */
+  line-height: 1.2; /* Reduce line height to avoid large vertical gaps */
+  letter-spacing: 0; /* Remove excessive letter spacing */
+  font-family: 'Roboto', sans-serif; /* Use a clean, readable font */
+}
+
+/* Heading Styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 18px; /* Slightly larger headings */
+  margin-bottom: 8px; /* Space below headings */
+  line-height: 1.1;
+  letter-spacing: 4px;
+  /* Compact line height for headings */
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse; /* Remove extra space between table cells */
+}
+
+table th,
+table td {
+  padding: 6px; /* Compact cell padding */
+  font-size: 16px; /* Slightly larger table text */
+  text-align: left;
+}
+
+/* Paragraph and Text */
+p {
+  margin: 4px 0; /* Reduce paragraph margin to avoid large gaps */
+  font-size: 16px; /* Consistent font size */
+  letter-spacing: 4px; /* Normal letter spacing */
+}
+
+/* Logo Adjustments */
+/* img {
+  object-fit: fill;
+  height: 100%;
+  width: 100%;
+} */
+
+/* Button Styling */
+button {
+  font-size: 16px;
+  padding: 10px 16px;
+  cursor: pointer;
+}

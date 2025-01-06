@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
 import ResetStoreButton from '@/components/ResetStoreButton'
-import Invoice from '@/components/Invoice'
+import Invoice from '@/components/invoice/Invoice'
 
 // Type guard to ensure JsonValue is ShippingInfo
 function isShippingInfo(value: any): value is ShippingInfo {
