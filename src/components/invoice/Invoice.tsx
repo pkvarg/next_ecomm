@@ -2,9 +2,9 @@
 import React from 'react'
 import { jsPDF } from 'jspdf'
 import { ShippingInfo, Product } from '../../../types/types'
-import Image from 'next/image'
 import { formatCurrency, formatDate } from '@/lib/formatters'
-import './invoice.css'
+import styles from './invoice.module.css'
+import { Bold } from 'lucide-react'
 
 interface OrderProps {
   order: {
@@ -78,15 +78,7 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
         scale: scale, // Scale the content
       },
     })
-
-    // const doc = new jsPDF()
-    // doc.html(invoiceElement, {
-    //   callback: function (doc) {
-    //     doc.save('invoice.pdf')
-    //   },
-    //   x: 0,
-    //   y: 0,
-    // })
+  
   }
 
   const addOneMonth = (date?: Date): Date | undefined => {
@@ -97,13 +89,14 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
   }
 
   return (
-    <div className={`bg-gray-100`}>
-      <div id="invoice" className=" bg-white shadow-md rounded-lg p-6 mt-8">
+    <div className={styles.around}>
+      <div id="invoice" className={styles.invoice}>
         <div className="flex flex-row justify-between">
           <div>
             <img
               src="/next_ecom_logo.webp"
               alt="next_ecom_logo"
+              className={styles.img}
               style={{
                 objectFit: 'fill', // Ensures the image fits the container, potentially distorting the aspect ratio
                 width: '225px',
@@ -112,11 +105,11 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
             />
           </div>
 
-          <div className="text-right">
-            <h1>Pictusweb s.r.o. </h1>
-            <h2>Nábrežná 4895/42</h2>
-            <h3>940 02 Nové Zámky</h3>
-            <h4>Slovenská republika</h4>
+          <div className={styles.right}>
+            <h1 className={styles.h1}>Pictusweb s.r.o. </h1>
+            <p>Nábrežná 4895/42</p>
+            <p>940 02 Nové Zámky</p>
+            <p>Slovenská republika</p>
             <div className="text-[15px]">
               <h5>IČO: 54631068</h5>
               <h6>DIČ: 2121741424</h6>
@@ -130,13 +123,13 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
             </div>
           </div>
         </div>
-        <h1 className="my-4">Faktúra - Daňový doklad </h1>
-        <div className="mb-4">
+        <h1 className={styles.margin}>Faktúra - Daňový doklad </h1>
+        <div className={styles.invoicedetails}>
           <p className="text-gray-600">Faktúra: {order.orderNumber}</p>
           <p className="text-gray-600">Dátum: {formatDate(order.createdAt!.toLocaleString())}</p>
         </div>
         <div className="flex flex-row justify-between">
-          <div>
+          <div className={styles.invoicedetails}>
             <p>Dátum vystavenia: {formatDate(order.createdAt!.toLocaleString())}</p>
             <p>Dátum splatnosti: {formatDate(addOneMonth(order.createdAt)!.toLocaleString())}</p>
             <p>
@@ -151,8 +144,8 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
               <p>Variabilný symbol: {order.orderNumber}</p>
             )}
           </div>
-          <div className="text-right">
-            <h1 className="font-bold">Doručovacie údaje</h1>
+          <div className={styles.rightshipping}>
+            <h1 className={styles.h1}>Doručovacie údaje</h1>
             <p>{order.shippingInfo.name}</p>
             <p>
               {order.shippingInfo.street} {order.shippingInfo.house_number}
@@ -162,8 +155,8 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
             </p>
           </div>
         </div>
-        <div className="text-right my-4">
-          <h1 className="font-bold">Fakturačné údaje</h1>
+        <div className={styles.rightbilling}>
+          <h1 className={styles.h2}>Fakturačné údaje</h1>
           {order.shippingInfo.is_billing_address ? (
             <>
               <p>{order.shippingInfo.billing_name}</p>
@@ -227,11 +220,10 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
           <p>Vystavil: PV</p>
           <p>Faktúra zároveň slúži ako dodací list</p>
         </div>
+       
       </div>
-      <button
-        onClick={() => generatePDF()}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-      >
+
+      <button onClick={() => generatePDF()} className="bg-blue-500 text-white px-4 py-2 rounded">
         Download PDF
       </button>
     </div>

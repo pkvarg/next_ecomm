@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+/* General Styles */
+
+.around {
+  background-color: rgb(243, 236, 236);
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.invoice {
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin: 1.5rem;
+}
+
+.h1,
+.h2 {
+  font-weight: 900;
+  font-size: 20px;
+  margin-bottom: 8px; /* Space below headings */
+  line-height: 1.1;
+  letter-spacing: 1px;
+}
+
+.h2 {
+  font-size: 17.5px;
+}
+
+.margin {
+  margin: 20px 0;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.invoicedetails {
+  margin: 20px 0;
+  font-size: 17.5px;
+}
+/* Table Styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* .table th,
+.table td {
+  padding: 6px; 
+  font-size: 16px; 
+  text-align: left;
+} */
+
+.right {
+  margin: 4px 0;
+  font-size: 17.5px;
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+.rightshipping {
+  margin: 8px 0;
+  font-size: 17.5px;
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+.rightbilling {
+  margin: 16px 0;
+  font-size: 15px;
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+/* Logo Adjustments */
+.img {
+  object-fit: fill;
+  width: '225px';
+  height: '225px';
+}
+
+/* Button Styling */
+.button {
+  font-size: 16px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
