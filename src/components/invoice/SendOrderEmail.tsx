@@ -184,7 +184,7 @@ const SendOrderEmail: React.FC<OrderProps> = ({ order }) => {
       }
     }
     orderEmailSent()
-  }, []) // Dependency array
+  }) // Dependency array
 
   return (
     <div className={styles.around}>
