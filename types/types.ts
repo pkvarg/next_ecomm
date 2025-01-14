@@ -56,4 +56,5 @@ export interface Order {
   paidAt?: Date
   sentAt?: Date
   isCancelled: Boolean
+  orderEmailSent: Boolean
 }

@@ -1,10 +1,10 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { jsPDF } from 'jspdf'
 import { ShippingInfo, Product } from '../../../types/types'
 import { formatCurrency, formatDate } from '@/lib/formatters'
 import styles from './invoice.module.css'
-import { Bold } from 'lucide-react'
+import { getOrderEmailSentStatus, updateOrderToOrderEmailSent } from '@/actions/orders'
 
 interface OrderProps {
   order: {
@@ -27,7 +27,9 @@ interface OrderProps {
   }
 }
 
-const Invoice: React.FC<OrderProps> = ({ order }) => {
+const SendOrderEmail: React.FC<OrderProps> = ({ order }) => {
+  // const email = order.userEmail
+
   // Helper to Convert ArrayBuffer to Base64
   const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
     let binary = ''
@@ -37,6 +39,8 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
     }
     return btoa(binary) // Convert to Base64
   }
+
+  // CALLED BY BUTTON FOR USER TO GET HIS PDF
 
   const generatePDF = async () => {
     const invoiceElement = document.querySelector('#invoice') as HTMLElement // Explicitly cast to HTMLElement
@@ -68,7 +72,7 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
 
     doc.html(invoiceElement, {
       callback: function (doc) {
-        doc.save('invoice.pdf')
+        doc.save(`invoice_${order.orderNumber}_d`)
       },
       x: 10,
       y: 10,
@@ -78,7 +82,32 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
         scale: scale, // Scale the content
       },
     })
-  
+  }
+
+  const sendEmail = async (pdfBase64: string) => {
+    try {
+      const response = await fetch('/api/orderEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          order,
+          pdfBase64,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        console.error('Error sending email:', data.error)
+        return
+      }
+
+      console.log('Email sent successfully:', data)
+    } catch (error) {
+      console.error('Error calling send-email API:', error)
+    }
   }
 
   const addOneMonth = (date?: Date): Date | undefined => {
@@ -87,6 +116,75 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
     newDate.setMonth(newDate.getMonth() + 1)
     return newDate
   }
+
+  // NOT BY BUTTON, CALLED AFTER FINISHING THE ORDER in useEffect
+
+  const generatePDF2 = async () => {
+    const invoiceElement = document.querySelector('#invoice') as HTMLElement
+    if (!invoiceElement) {
+      console.error('Invoice element not found')
+      return
+    }
+
+    const doc = new jsPDF({
+      orientation: 'p',
+      unit: 'mm',
+      format: 'a4',
+    })
+
+    // Fetch and embed font
+    try {
+      const fontBuffer = await fetch('/fonts/Roboto-Regular.ttf').then((res) => res.arrayBuffer())
+      const fontBase64 = arrayBufferToBase64(fontBuffer)
+
+      doc.addFileToVFS('Roboto-Regular.ttf', fontBase64)
+      doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal')
+      doc.setFont('Roboto')
+      console.log('Font successfully loaded')
+    } catch (error) {
+      console.error('Failed to load font', error)
+    }
+
+    const scale = 190 / invoiceElement.offsetWidth // Calculate scale based on A4 width
+
+    // Generate the PDF
+    return new Promise((resolve, reject) => {
+      doc.html(invoiceElement, {
+        callback: async (doc) => {
+          try {
+            const pdfBase64 = doc.output('datauristring').split(',')[1] // Extract Base64 string
+            await sendEmail(pdfBase64) // Send PDF via email
+            resolve('Email sent successfully')
+          } catch (error) {
+            console.error('Error generating or sending PDF', error)
+            reject(error)
+          }
+        },
+        x: 10,
+        y: 10,
+        width: 190, // PDF width
+        windowWidth: invoiceElement.offsetWidth,
+        html2canvas: {
+          scale: scale,
+          useCORS: true, // Handle cross-origin images
+          backgroundColor: '#fff', // Ensure a white background
+        },
+      })
+    })
+  }
+
+  useEffect(() => {
+    const orderEmailSent = async () => {
+      const isSent = await getOrderEmailSentStatus(order.id!)
+      console.log('isSent:', isSent)
+
+      if (!isSent) {
+        await generatePDF2()
+        await updateOrderToOrderEmailSent(order.id!)
+      }
+    }
+    orderEmailSent()
+  }, []) // Dependency array
 
   return (
     <div className={styles.around}>
@@ -98,7 +196,7 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
               alt="next_ecom_logo"
               className={styles.img}
               style={{
-                objectFit: 'fill', // Ensures the image fits the container, potentially distorting the aspect ratio
+                objectFit: 'fill',
                 width: '225px',
                 height: '225px',
               }}
@@ -220,7 +318,6 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
           <p>Vystavil: PV</p>
           <p>Faktúra zároveň slúži ako dodací list</p>
         </div>
-       
       </div>
 
       <button onClick={() => generatePDF()} className="bg-blue-500 text-white px-4 py-2 rounded">
@@ -230,4 +327,4 @@ const Invoice: React.FC<OrderProps> = ({ order }) => {
   )
 }
 
-export default Invoice
+export default SendOrderEmail

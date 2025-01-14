@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
 import ResetStoreButton from '@/components/ResetStoreButton'
-import Invoice from '@/components/invoice/Invoice'
+import SendOrderEmail from '@/components/invoice/SendOrderEmail'
 
 // Type guard to ensure JsonValue is ShippingInfo
 function isShippingInfo(value: any): value is ShippingInfo {
@@ -150,7 +150,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
         </div>
       </div>
       {/* INVOICE */}
-      <Invoice order={order} />
+      <SendOrderEmail order={order} />
     </>
   )
 }

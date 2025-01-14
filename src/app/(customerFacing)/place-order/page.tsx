@@ -8,7 +8,6 @@ import useShippingStore from '@/store/shippingStore'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-
 import { createNewOrder } from '@/actions/orders'
 import { Order } from '../../../../types/types'
 import { FaRegFile } from 'react-icons/fa'
@@ -51,6 +50,7 @@ const PlaceOrder = () => {
     shippingInfo: shippingInfo,
     products: items,
     isCancelled: false,
+    orderEmailSent: false,
   }
 
   const placeOrder = async (e: any) => {

@@ -142,3 +142,27 @@ export async function updatedOrderToCanceled(id: string) {
     console.error('Error updating order to canceled:', error)
   }
 }
+
+export async function updateOrderToOrderEmailSent(id: string) {
+  try {
+    await db.order.update({
+      where: { id },
+      data: {
+        orderEmailSent: true,
+      },
+    })
+    return { message: 'Order email updated to sent' }
+  } catch (error) {
+    console.error('Error updating order email to sent:', error)
+  }
+}
+
+export async function getOrderEmailSentStatus(id: string) {
+  const order = await db.order.findFirst({
+    where: {
+      id: id,
+    },
+  })
+
+  return order?.orderEmailSent
+}

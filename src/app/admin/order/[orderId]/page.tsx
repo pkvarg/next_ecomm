@@ -53,6 +53,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
     paidAt: orderDB?.paidAt || undefined,
     sentAt: orderDB?.sentAt || undefined,
     isCancelled: orderDB?.isCancelled,
+    orderEmailSent: orderDB?.orderEmailSent,
   }
 
   return (
@@ -129,6 +130,14 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
           {!order.paidAt && <UpdateOrderButton id={orderId} action="paid" />}
           {!order.sentAt && <UpdateOrderButton id={orderId} action="sent" />}
           {!order.isCancelled && <UpdateOrderButton id={orderId} action="cancel" />}
+          <p className="font-bold capitalize">
+            Order Email sent:{' '}
+            {order.orderEmailSent ? (
+              <span className="bg-green-400 text-white px-2">Sent</span>
+            ) : (
+              <span className="bg-red-700 text-white px-2">NO</span>
+            )}
+          </p>
         </div>
 
         <div className="flex flex-col gap-1 mt-4">

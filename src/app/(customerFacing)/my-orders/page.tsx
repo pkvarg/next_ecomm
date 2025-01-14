@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { JsonValue } from '@prisma/client/runtime/library'
 import { formatCurrency, formatDate } from '@/lib/formatters'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function MyOrdersPage() {
   const [myOrders, setMyOrders] = useState<JsonValue[] | null>([])
@@ -124,6 +125,13 @@ export default function MyOrdersPage() {
                   </>
                 )}
               </div>
+              <div className="mt-4">
+                <Link href={`/order/${order.id}`} className="bg-blue-500 text-white p-2 ">
+                  {' '}
+                  Go to Order
+                </Link>
+              </div>
+
               <div className="h-[1.5px] bg-black mt-8"></div>
             </div>
           ))}
