@@ -27,6 +27,25 @@ export const logUser = async (email: string) => {
         },
       },
     })
+    // send notif to admin
+    try {
+      const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          order: [],
+          origin: process.env.NEXT_PUBLIC_ORIGIN,
+          pdf: '',
+          email,
+        }),
+      })
+      console.log('notif sent', response)
+    } catch (err) {
+      console.log('err admin notif email', err)
+    }
+
     return user
   } else {
     const user = await db.user.update({
