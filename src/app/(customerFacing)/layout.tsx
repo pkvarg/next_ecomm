@@ -1,3 +1,4 @@
+import Footer from '@/components/footer'
 import { Nav, NavLink } from '@/components/Nav'
 
 export const dynamic = 'force-dynamic'
@@ -15,8 +16,8 @@ export default function Layout({
         <NavLink href="/my-orders">My Orders</NavLink>
         <NavLink href="/my-downloads">My Downloads</NavLink>
       </Nav>
-
       <div className="container my-6">{children}</div>
+      <Footer />
     </>
   )
 }

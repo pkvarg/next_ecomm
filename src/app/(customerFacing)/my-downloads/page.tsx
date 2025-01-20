@@ -14,9 +14,11 @@ const MyDownloads = () => {
   const [filePaths, setFilePaths] = useState<JsonValue[] | null>([])
   const [products, setProducts] = useState<JsonValue[] | null>([])
   const { email, id: userId } = useUserStore()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const getMyOrders = async () => {
+      setIsLoading(true)
       const orders = await getOrdersByUserId(userId)
       if (orders) {
         // Serialize orders to ensure it's safely handled
@@ -71,18 +73,23 @@ const MyDownloads = () => {
         setFilePaths(() => {
           return filePaths
         })
+        setIsLoading(false)
       }
     }
     getMyOrders()
   }, [email, userId])
 
   // Early return when no orders are present
-  if (myOrders?.length === 0) {
-    return <h1>You have no Orders</h1>
-  }
+  if (isLoading) {
+    return <h1>Loading...</h1>
+  } else {
+    if (myOrders?.length === 0) {
+      return <h1>You have no Orders</h1>
+    }
 
-  if (!ordersWithFiles) {
-    return <h1>You have no Orders with Downlodable Products</h1>
+    if (!ordersWithFiles) {
+      return <h1>You have no Orders with Downlodable Products</h1>
+    }
   }
 
   const getFileNameFromUrl = (url: string) => {

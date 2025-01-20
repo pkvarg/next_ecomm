@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body,
+#__next {
+  height: 100%; /* Ensure the full height of the viewport */
+  margin: 0; /* Remove default margin */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
