@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import db from '@/db/db'
 import { formatCurrency, formatNumber } from '@/lib/formatters'
 
@@ -20,6 +14,15 @@ async function getSalesData() {
   }
 }
 
+async function getVisitorsData() {
+  const visitor = await db.visitorsCount.findUnique({
+    where: {
+      id: 'e54f0eb9-79ec-4359-820a-7df4c5f6906e',
+    },
+  })
+  return visitor?.count
+}
+
 async function getUserData() {
   const [userCount, orderData] = await Promise.all([
     db.user.count(),
@@ -31,9 +34,7 @@ async function getUserData() {
   return {
     userCount,
     averageValuePerUser:
-      userCount === 0
-        ? 0
-        : (orderData._sum.pricePaidInCents || 0) / userCount / 100,
+      userCount === 0 ? 0 : (orderData._sum.pricePaidInCents || 0) / userCount / 100,
   }
 }
 
@@ -47,27 +48,27 @@ async function getProductData() {
 }
 
 export default async function AdminDashboard() {
-  const [salesData, userData, productData] = await Promise.all([
+  const [salesData, visitorsData, userData, productData] = await Promise.all([
     getSalesData(),
+    getVisitorsData(),
     getUserData(),
     getProductData(),
   ])
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <DashboardCard title="Visitors" subtitle={''} body={visitorsData!.toString()} />
       <DashboardCard
-        title='Sales'
+        title="Sales"
         subtitle={`${formatNumber(salesData.numberOfSales)} Orders`}
         body={formatCurrency(salesData.amount)}
       />
       <DashboardCard
-        title='Customers'
-        subtitle={`${formatCurrency(
-          userData.averageValuePerUser
-        )} Average Value`}
+        title="Customers"
+        subtitle={`${formatCurrency(userData.averageValuePerUser)} Average Value`}
         body={formatNumber(userData.userCount)}
       />
       <DashboardCard
-        title='Active Products'
+        title="Active Products"
         subtitle={`${formatNumber(productData.inactiveCount)} Inactive`}
         body={formatNumber(productData.activeCount)}
       />

@@ -27,7 +27,6 @@ model User {
   
 }
 
-
 model Product {
   id                     String                @id @default(uuid())
   name                   String
@@ -64,6 +63,14 @@ model Order {
   paidAt                    DateTime? 
   orderEmailSent            Boolean @default(false)
 }
+
+model VisitorsCount {
+  id        String   @id @default(uuid())
+  count     Int   @unique
+  updatedAt DateTime @updatedAt  
+}
+
+
 
 
 
