@@ -3,8 +3,11 @@ import db from '@/db/db'
 import { Order, Product } from '../../types/types'
 import { getOrderNumber } from '@/lib/orderNumber'
 import { updateUserNewsletterSubscription } from '@/app/actions/userActions'
+import { isAuth, isAuthAdmin } from '@/lib/isAuth'
 
 export async function createNewOrder(newOrder: Order) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
   const orderNumber = await getOrderNumber()
   const subscriber = newOrder.newsletter
   // User check if subscriber and update
@@ -44,6 +47,8 @@ export async function createNewOrder(newOrder: Order) {
 }
 
 async function updateProductCountInStockAndAvailability(products: Product[]) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
   for (const product of products) {
     // Fetch the product from the database by its ID
     const prod = await db.product.findUnique({
@@ -81,6 +86,8 @@ async function updateProductCountInStockAndAvailability(products: Product[]) {
 }
 
 export async function getOrderById(id: string) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
   const order = await db.order.findFirst({
     where: {
       id: id,
@@ -91,6 +98,8 @@ export async function getOrderById(id: string) {
 }
 
 export async function getOrdersByUserId(id: string) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
   const orders = await db.order.findMany({
     where: {
       userId: id,
@@ -102,6 +111,9 @@ export async function getOrdersByUserId(id: string) {
 }
 
 export async function updateOrderToPaid(id: string) {
+  // do with Stripe also
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
   try {
     await db.order.update({
       where: { id },
@@ -116,6 +128,8 @@ export async function updateOrderToPaid(id: string) {
 }
 
 export async function updateOrderToSent(id: string) {
+  const isAuthenticated = await isAuthAdmin()
+  if (!isAuthenticated) return
   try {
     await db.order.update({
       where: { id },
@@ -130,6 +144,8 @@ export async function updateOrderToSent(id: string) {
 }
 
 export async function updatedOrderToCanceled(id: string) {
+  const isAuthenticated = await isAuthAdmin()
+  if (!isAuthenticated) return
   try {
     await db.order.update({
       where: { id },
@@ -144,6 +160,8 @@ export async function updatedOrderToCanceled(id: string) {
 }
 
 export async function updateOrderToOrderEmailSent(id: string) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
   try {
     await db.order.update({
       where: { id },
@@ -158,6 +176,8 @@ export async function updateOrderToOrderEmailSent(id: string) {
 }
 
 export async function getOrderEmailSentStatus(id: string) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
   const order = await db.order.findFirst({
     where: {
       id: id,

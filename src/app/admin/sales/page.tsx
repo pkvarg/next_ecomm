@@ -33,7 +33,7 @@ export default function UsersPage() {
 async function UsersTable() {
   const orders = await getAllOrders()
 
-  if (orders.length === 0) return <p>No orders found</p>
+  if (orders?.length === 0) return <p>No orders found</p>
 
   return (
     <Table>
@@ -49,7 +49,7 @@ async function UsersTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {orders.map((order) => (
+        {orders?.map((order) => (
           <TableRow key={order.id}>
             <TableCell>{order.userEmail}</TableCell>
 

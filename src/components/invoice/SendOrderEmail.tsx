@@ -5,6 +5,7 @@ import { ShippingInfo, Product } from '../../../types/types'
 import { formatCurrency, formatDate } from '@/lib/formatters'
 import styles from './invoice.module.css'
 import { getOrderEmailSentStatus, updateOrderToOrderEmailSent } from '@/actions/orders'
+import { sendOrderWithPdf } from '@/actions/sendEmail'
 
 interface OrderProps {
   order: {
@@ -24,6 +25,7 @@ interface OrderProps {
     paidAt?: Date
     sentAt?: Date
     isCancelled: Boolean
+    orderEmailSent: Boolean
   }
 }
 
@@ -84,32 +86,6 @@ const SendOrderEmail: React.FC<OrderProps> = ({ order }) => {
     })
   }
 
-  const sendEmail = async (pdfBase64: string) => {
-    try {
-      const response = await fetch('/api/orderEmail', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          order,
-          pdfBase64,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        console.error('Error sending email:', data.error)
-        return
-      }
-
-      console.log('Email sent successfully:', data)
-    } catch (error) {
-      console.error('Error calling send-email API:', error)
-    }
-  }
-
   const addOneMonth = (date?: Date): Date | undefined => {
     if (!date) return undefined
     const newDate = new Date(date)
@@ -153,7 +129,8 @@ const SendOrderEmail: React.FC<OrderProps> = ({ order }) => {
         callback: async (doc) => {
           try {
             const pdfBase64 = doc.output('datauristring').split(',')[1] // Extract Base64 string
-            await sendEmail(pdfBase64) // Send PDF via email
+            //await sendEmail(pdfBase64)
+            await sendOrderWithPdf(order, pdfBase64)
             resolve('Email sent successfully')
           } catch (error) {
             console.error('Error generating or sending PDF', error)

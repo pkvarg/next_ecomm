@@ -1,5 +1,5 @@
 'use client'
-import { contactEmail } from '@/actions/contactEmail'
+import { contactEmail } from '@/actions/sendEmail'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -59,6 +59,7 @@ const Contact = () => {
     } catch (error) {
       console.error('Failed to send contact email:', error)
       setWarning('Failed to send contact email. Please try again later.')
+      setAgree(false)
 
       const element = document.getElementById('contact')
       element?.scrollIntoView({ behavior: 'smooth' })

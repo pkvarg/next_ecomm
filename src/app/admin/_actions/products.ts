@@ -5,6 +5,7 @@ import { z } from 'zod'
 import fs from 'fs/promises'
 import { notFound, redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { isAuth, isAuthAdmin } from '@/lib/isAuth'
 
 //const fileSchema = z.instanceof(File, { message: 'Required' })
 const fileSchema = z.instanceof(File)
@@ -22,6 +23,8 @@ const addSchema = z.object({
 })
 
 export async function addProduct(prevState: unknown, formData: FormData) {
+  const isAuthenticated = await isAuthAdmin()
+  if (!isAuthenticated) return
   const result = addSchema.safeParse(Object.fromEntries(formData.entries()))
   console.log('here add', result)
   if (result.success === false) {
@@ -80,6 +83,8 @@ const editSchema = addSchema.extend({
 })
 
 export async function updateProduct(id: string, prevState: unknown, formData: FormData) {
+  const isAuthenticated = await isAuthAdmin()
+  if (!isAuthenticated) return
   const result = editSchema.safeParse(Object.fromEntries(formData.entries()))
   console.log('update res', result)
   if (result.success === false) {
@@ -145,6 +150,8 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
 }
 
 export async function toggleProductAvailability(id: string, isAvailableForPurchase: boolean) {
+  const isAuthenticated = await isAuthAdmin()
+  if (!isAuthenticated) return
   await db.product.update({ where: { id }, data: { isAvailableForPurchase } })
 
   revalidatePath('/')
