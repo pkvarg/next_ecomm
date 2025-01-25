@@ -22,7 +22,7 @@ export default function LogsPage() {
 async function UsersTable() {
   const users = await getAllUsers()
 
-  if (users.length === 0) return <p>No logs found</p>
+  if (users?.length === 0) return <p>No logs found</p>
 
   return (
     <Table>
@@ -35,7 +35,7 @@ async function UsersTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
+        {users?.map((user) => (
           <TableRow key={user.id}>
             <TableCell>{user.email}</TableCell>
 

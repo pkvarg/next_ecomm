@@ -4,6 +4,7 @@ import { Order, Product } from '../../types/types'
 import { getOrderNumber } from '@/lib/orderNumber'
 import { updateUserNewsletterSubscription } from '@/app/actions/userActions'
 import { isAuth, isAuthAdmin } from '@/lib/isAuth'
+import { lowProductCount } from './sendEmail'
 
 export async function createNewOrder(newOrder: Order) {
   const isAuthenticated = await isAuth()
@@ -65,6 +66,14 @@ async function updateProductCountInStockAndAvailability(products: Product[]) {
 
     // Calculate the new quantity after subtracting the qty from countInStock
     const newQty = prod.countInStock - product.qty
+
+    if (newQty <= 10) {
+      try {
+        await lowProductCount(prod.name, prod.id, newQty.toString())
+      } catch (error) {
+        console.log('low prod count send email error', error)
+      }
+    }
 
     const updateData: any = {
       countInStock: newQty, // Set the new countInStock value

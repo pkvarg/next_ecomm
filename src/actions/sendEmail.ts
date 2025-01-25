@@ -77,3 +77,30 @@ export async function sendOrderWithPdf(order: Order, pdfBase64: string) {
     return { success: false, message: 'An unexpected error occurred' }
   }
 }
+
+export async function lowProductCount(product: string, name: string, newQty: string) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
+  try {
+    // Make the API call using fetch
+    const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        order: [],
+        origin: process.env.NEXT_ORIGIN,
+        pdf: newQty, // to reuse eshopMailer function on server
+        email: product + '  ' + name, // to reuse eshopMailer function on server
+        action: 'lowProductCount',
+      }),
+    })
+
+    const { status } = await response.json()
+
+    if (status) return status
+  } catch (err) {
+    console.log('error', err)
+  }
+}

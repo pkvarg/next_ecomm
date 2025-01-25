@@ -16,8 +16,10 @@ export default function Layout({
         <NavLink href="/my-orders">My Orders</NavLink>
         <NavLink href="/my-downloads">My Downloads</NavLink>
       </Nav>
-      <div className="container my-6">{children}</div>
-      <Footer />
+      <div className="flex flex-col min-h-screen">
+        <div className="flex-grow container my-6">{children}</div>
+        <Footer />
+      </div>
     </>
   )
 }

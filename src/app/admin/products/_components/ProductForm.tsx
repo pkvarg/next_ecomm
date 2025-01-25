@@ -43,7 +43,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
         <Input type="text" id="name" name="name" required defaultValue={product?.name || ''} />
-        {error.name && <div className="text-destructive">{error.name}</div>}
+        {error?.name && <div className="text-destructive">{error.name}</div>}
       </div>
       <div className="space-y-2">
         <Label htmlFor="priceInCents">Price In Cents</Label>
@@ -56,7 +56,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
           onChange={(e) => setPriceInCents(Number(e.target.value) || undefined)}
         />
         <div className="text-muted-foreground">{formatCurrency((priceInCents || 0) / 100)}</div>
-        {error.priceInCents && <div className="text-destructive">{error.priceInCents}</div>}
+        {error?.priceInCents && <div className="text-destructive">{error.priceInCents}</div>}
       </div>
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
@@ -66,7 +66,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
           required
           defaultValue={product?.description ?? ''}
         />
-        {error.description && <div className="text-destructive">{error.description}</div>}
+        {error?.description && <div className="text-destructive">{error.description}</div>}
       </div>
       <div className="space-y-2">
         <Label htmlFor="count_in_stock">Count in Stock</Label>
@@ -78,7 +78,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
           value={countInStock || ''}
           onChange={(e) => setCountInStock(Number(e.target.value) || undefined)}
         />
-        {error.countInStock && <div className="text-destructive">{error.countInStock}</div>}
+        {error?.countInStock && <div className="text-destructive">{error.countInStock}</div>}
       </div>
 
       {product?.imagePath && uploadedImageUrl === '' && (
