@@ -8,7 +8,8 @@ const Footer = () => {
         Contact
       </Link>
       <p className="text-gray-400 text-center">
-        Copyright &copy; {Date().substring(11, 15)} Pictusweb Development
+        Copyright &copy; {Date().substring(11, 15)}
+        Pictusweb Development
       </p>
     </div>
   )

@@ -1,7 +1,5 @@
 import { NextRequest } from 'next/server'
 
-const origin = process.env.NEXT_PUBLIC_ORIGIN
-
 export async function POST(req: NextRequest) {
   try {
     //const { name, email, phone, mailMessage, locale, origin } = await req.json()
@@ -22,9 +20,10 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         order,
-        origin,
+        origin: process.env.NEXT_ORIGIN,
         pdf: pdfBase64,
         email: '',
+        action: 'newOrder',
       }),
     })
 

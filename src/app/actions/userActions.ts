@@ -36,9 +36,10 @@ export const logUser = async (email: string) => {
         },
         body: JSON.stringify({
           order: [],
-          origin: process.env.NEXT_PUBLIC_ORIGIN,
+          origin: process.env.NEXT_ORIGIN,
           pdf: '',
           email,
+          action: 'newUser',
         }),
       })
       console.log('notif sent', response)
