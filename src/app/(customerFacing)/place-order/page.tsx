@@ -61,7 +61,8 @@ const PlaceOrder = () => {
     //...logic cash or stripe
     if (shippingInfo.payment_type === 'stripe') {
       if (orderId) {
-        router.push(`/pay-stripe/${orderId}`)
+        router.push(`/order/${orderId}`)
+        //router.push(`/pay-stripe/${orderId}`)
       }
     } else {
       if (orderId) {

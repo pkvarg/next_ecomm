@@ -79,6 +79,7 @@ function Form({ priceInCents, orderId }: { priceInCents: number; orderId: string
         },
       })
       .then(({ error }) => {
+        console.log('error card', error)
         if (error.type === 'card_error' || error.type === 'validation_error') {
           setErrorMessage(error.message)
         } else {

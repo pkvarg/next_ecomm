@@ -7,6 +7,7 @@ import Stripe from 'stripe'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import ResetStoreButton from '@/components/ResetStoreButton'
 import { updateOrderToPaid } from '@/actions/orders'
+import { orderPaidByStripe } from '@/actions/sendEmail'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 // Type guard to ensure JsonValue is ShippingInfo
@@ -70,6 +71,7 @@ export default async function SuccessPage({
 
   if (isSuccess) {
     await updateOrderToPaid(paymentIntent.metadata.orderId)
+    await orderPaidByStripe(order)
   }
 
   return (

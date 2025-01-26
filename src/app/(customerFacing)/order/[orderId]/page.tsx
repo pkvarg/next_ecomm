@@ -6,6 +6,7 @@ import { CardDescription, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatters'
 import ResetStoreButton from '@/components/ResetStoreButton'
 import SendOrderEmail from '@/components/invoice/SendOrderEmail'
+import GoToPayOrder from '@/components/GoToPayOrder'
 
 // Type guard to ensure JsonValue is ShippingInfo
 function isShippingInfo(value: any): value is ShippingInfo {
@@ -146,7 +147,11 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
           <p>Tax: {formatCurrency(order.tax)}</p>
           <div className="h-[1.5px] bg-black"></div>
           <p>Total: {formatCurrency(order.pricePaidInCents / 100)}</p>
-          <ResetStoreButton />
+          {order.shippingInfo.payment_type === 'stripe' ? (
+            <GoToPayOrder orderId={orderId} />
+          ) : (
+            <ResetStoreButton />
+          )}
         </div>
       </div>
       {/* INVOICE */}

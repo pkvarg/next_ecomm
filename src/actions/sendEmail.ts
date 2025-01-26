@@ -104,3 +104,42 @@ export async function lowProductCount(product: string, name: string, newQty: str
     console.log('error', err)
   }
 }
+
+export async function orderPaidByStripe(order: Order) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
+  try {
+    // Make the API call using fetch
+    const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        order,
+        origin: process.env.NEXT_ORIGIN,
+        pdf: '',
+        email: '',
+        action: 'paidByStripe',
+      }),
+    })
+
+    const { status } = await response.json()
+
+    if (status) return status
+  } catch (err) {
+    console.log('error', err)
+  }
+}
+
+// not yet
+export async function orderStripeError(product: string, name: string, newQty: string) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
+}
+
+// not yet
+export async function orderPackedAndSent(product: string, name: string, newQty: string) {
+  const isAuthenticated = await isAuth()
+  if (!isAuthenticated) return
+}
