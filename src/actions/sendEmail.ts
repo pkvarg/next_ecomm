@@ -12,7 +12,7 @@ const EmailSchema = z.object({
 })
 
 export async function contactEmail(email: unknown) {
-  EmailSchema.parse(email) // Throws an error if invalid
+  EmailSchema.safeParse(email)
 
   const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
     method: 'POST',
@@ -132,14 +132,37 @@ export async function orderPaidByStripe(order: Order) {
   }
 }
 
-// not yet
+// will not
 export async function orderStripeError(product: string, name: string, newQty: string) {
   const isAuthenticated = await isAuth()
   if (!isAuthenticated) return
 }
 
 // not yet
-export async function orderPackedAndSent(product: string, name: string, newQty: string) {
+export async function orderPackedAndSent(order: Order) {
   const isAuthenticated = await isAuth()
   if (!isAuthenticated) return
+
+  try {
+    // Make the API call using fetch
+    const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        order,
+        origin: process.env.NEXT_ORIGIN,
+        pdf: '',
+        email: '',
+        action: 'orderPackedAndSent',
+      }),
+    })
+
+    const { status } = await response.json()
+
+    if (status) return status
+  } catch (err) {
+    console.log('error', err)
+  }
 }

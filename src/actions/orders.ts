@@ -1,10 +1,70 @@
 'use server'
 import db from '@/db/db'
 import { Order, Product } from '../../types/types'
+
 import { getOrderNumber } from '@/lib/orderNumber'
 import { updateUserNewsletterSubscription } from '@/app/actions/userActions'
 import { isAuth, isAuthAdmin } from '@/lib/isAuth'
-import { lowProductCount } from './sendEmail'
+import { lowProductCount, orderPackedAndSent } from './sendEmail'
+
+function transformOrder(input: any): Order {
+  return {
+    id: input.id,
+    orderNumber: input.orderNumber,
+    pricePaidInCents: input.pricePaidInCents,
+    productTotalsPrice: input.productTotalsPrice * 100, // Assuming it needs conversion to cents
+    postage: input.postage * 100, // Assuming cents conversion
+    tax: Math.round(input.tax * 100), // Convert tax to cents and round
+    createdAt: new Date(input.createdAt),
+    updatedAt: new Date(input.updatedAt),
+    userId: input.userId,
+    userEmail: input.userEmail,
+    newsletter: input.newsletter,
+    isCancelled: input.isCancelled,
+    orderEmailSent: input.orderEmailSent,
+    paidAt: input.paidAt ? new Date(input.paidAt) : undefined,
+    sentAt: input.sentAt ? new Date(input.sentAt) : undefined,
+    shippingInfo: {
+      name: input.shippingInfo.name,
+      street: input.shippingInfo.street,
+      house_number: input.shippingInfo.house_number,
+      city: input.shippingInfo.city,
+      zip: input.shippingInfo.zip,
+      country: input.shippingInfo.country,
+      phone: input.shippingInfo.phone,
+      note: input.shippingInfo.note,
+      is_billing_address: input.shippingInfo.is_billing_address,
+      billing_name: input.shippingInfo.billing_name,
+      billing_street: input.shippingInfo.billing_street,
+      billing_house_number: input.shippingInfo.billing_house_number,
+      billing_city: input.shippingInfo.billing_city,
+      billing_zip: input.shippingInfo.billing_zip,
+      billing_country: input.shippingInfo.billing_country,
+      billing_ico: input.shippingInfo.billing_ico,
+      billing_dic: input.shippingInfo.billing_dic,
+      billing_ico_dph: input.shippingInfo.billing_ico_dph,
+      is_ico_dic: input.shippingInfo.is_ico_dic,
+      payment_type: input.shippingInfo.payment_type,
+      cash: input.shippingInfo.cash,
+      stripe: input.shippingInfo.stripe,
+      bank: input.shippingInfo.bank,
+    },
+    products: input.products.map((product: any) => ({
+      id: product.id,
+      name: product.name,
+      priceInCents: product.priceInCents,
+      filePath: product.filePath ?? undefined,
+      imagePath: product.imagePath,
+      description: product.description ?? undefined,
+      isAvailableForPurchase: product.isAvailableForPurchase ?? undefined,
+      createdAt: new Date(), // Assuming current date as createdAt is missing
+      updatedAt: new Date(), // Assuming current date as updatedAt is missing
+      qty: product.qty,
+      countInStock: product.countInStock,
+      downloadVerifications: [],
+    })),
+  }
+}
 
 export async function createNewOrder(newOrder: Order) {
   const isAuthenticated = await isAuth()
@@ -140,12 +200,27 @@ export async function updateOrderToSent(id: string) {
   const isAuthenticated = await isAuthAdmin()
   if (!isAuthenticated) return
   try {
+    // TEMP OFF
+
     await db.order.update({
       where: { id },
       data: {
         sentAt: new Date(),
       },
     })
+    // get the updated order
+    const orderDB = await db.order.findFirst({
+      where: {
+        id: id,
+      },
+    })
+
+    // send email
+    if (orderDB) {
+      const order: Order = transformOrder(orderDB)
+      await orderPackedAndSent(order)
+    }
+
     return { message: 'Order updated to sent' }
   } catch (error) {
     console.error('Error updating order to sent:', error)
