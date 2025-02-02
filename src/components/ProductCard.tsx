@@ -20,7 +20,7 @@ type ProductCardProps = {
 
 interface ProductTypes extends Product {}
 
-export function ProductCard(product: ProductTypes) {
+export function ProductCard(product: any) {
   const { addToCart, updateItemQty } = useCartStore((state) => state)
   const [count, setCount] = useState(1)
 
