@@ -147,7 +147,7 @@ export default async function Order({ params }: { params: Promise<{ orderId: str
           <p>Tax: {formatCurrency(order.tax)}</p>
           <div className="h-[1.5px] bg-black"></div>
           <p>Total: {formatCurrency(order.pricePaidInCents / 100)}</p>
-          {order.shippingInfo.payment_type === 'stripe' && order.paidAt === null ? (
+          {order.shippingInfo.payment_type === 'stripe' && order.paidAt === undefined ? (
             <GoToPayOrder orderId={orderId} />
           ) : (
             <ResetStoreButton />
