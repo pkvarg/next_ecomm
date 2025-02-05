@@ -14,7 +14,8 @@ const EmailSchema = z.object({
 export async function contactEmail(email: unknown) {
   EmailSchema.safeParse(email)
 
-  const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+  const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
+    //'http://localhost:3011/email/next_eshop/mailer', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -43,7 +44,8 @@ export async function sendOrderWithPdf(order: Order, pdfBase64: string) {
     }
 
     // Make the API call using fetch
-    const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+    const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
+      //'http://localhost:3011/email/next_eshop/mailer', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -83,7 +85,8 @@ export async function lowProductCount(product: string, name: string, newQty: str
   if (!isAuthenticated) return
   try {
     // Make the API call using fetch
-    const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+    const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
+      //'http://localhost:3011/email/next_eshop/mailer', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -110,7 +113,8 @@ export async function orderPaidByStripe(order: Order) {
   if (!isAuthenticated) return
   try {
     // Make the API call using fetch
-    const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+    const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
+      //'http://localhost:3011/email/next_eshop/mailer', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -145,7 +149,8 @@ export async function orderPackedAndSent(order: Order) {
 
   try {
     // Make the API call using fetch
-    const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+    const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
+      //'http://localhost:3011/email/next_eshop/mailer', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

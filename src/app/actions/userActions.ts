@@ -29,7 +29,8 @@ export const logUser = async (email: string) => {
     })
     // send notif to admin
     try {
-      const response = await fetch('http://localhost:3011/email/next_eshop/mailer', {
+      const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
+        //'http://localhost:3011/email/next_eshop/mailer', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

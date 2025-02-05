@@ -157,7 +157,7 @@ const SendOrderEmail: React.FC<OrderProps> = ({ order }) => {
 
       if (!isSent) {
         await generatePDF2()
-        // await updateOrderToOrderEmailSent(order.id!)
+        await updateOrderToOrderEmailSent(order.id!)
       }
     }
     orderEmailSent()
