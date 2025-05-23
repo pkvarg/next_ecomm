@@ -14,10 +14,21 @@ async function getSalesData() {
   }
 }
 
+// async function createVisitor() {
+//   console.log('here create')
+
+//   await db.visitorsCount.create({
+//     data: {
+//       count: 1,
+//       updatedAt: new Date(),
+//     },
+//   })
+// }
+
 async function getVisitorsData() {
   const visitor = await db.visitorsCount.findUnique({
     where: {
-      id: 'e54f0eb9-79ec-4359-820a-7df4c5f6906e',
+      id: '6830d9ff8e1d4d4b5b461e2b',
     },
   })
   return visitor?.count
@@ -51,6 +62,7 @@ export default async function AdminDashboard() {
   const [salesData, visitorsData, userData, productData] = await Promise.all([
     getSalesData(),
     getVisitorsData(),
+    //createVisitor(),
     getUserData(),
     getProductData(),
   ])
@@ -64,13 +76,13 @@ export default async function AdminDashboard() {
       />
       <DashboardCard
         title="Customers"
-        subtitle={`${formatCurrency(userData.averageValuePerUser)} Average Value`}
-        body={formatNumber(userData.userCount)}
+        subtitle={`${formatCurrency(userData?.averageValuePerUser)} Average Value`}
+        body={formatNumber(userData?.userCount)}
       />
       <DashboardCard
         title="Active Products"
-        subtitle={`${formatNumber(productData.inactiveCount)} Inactive`}
-        body={formatNumber(productData.activeCount)}
+        subtitle={`${formatNumber(productData?.inactiveCount)} Inactive`}
+        body={formatNumber(productData?.activeCount)}
       />
     </div>
   )

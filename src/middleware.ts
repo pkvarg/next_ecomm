@@ -30,6 +30,7 @@ export default clerkMiddleware(async (auth, req) => {
     // Check if the route is '/admin' and restrict access to a specific userl
     if (req.nextUrl.pathname === '/admin') {
       const { userId } = await auth()
+      console.log('userId', userId)
 
       const allowed = process.env.ADMIN_CLERK_USER_ID
 
