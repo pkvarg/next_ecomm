@@ -8,10 +8,24 @@ import { formatCurrency } from '@/lib/formatters'
 import { useState } from 'react'
 import { addProduct, updateProduct } from '../../_actions/products'
 import { useFormState, useFormStatus } from 'react-dom'
-import { Product } from '@prisma/client'
+//import { Product } from '@prisma/client'
 import Image from 'next/image'
 import CloudinaryImageUploader from '@/components/UploadProductsImage'
 import CloudinaryFileUploader from '@/components/UploadProductFile'
+
+interface Product {
+  id: string
+  name: string
+  priceInCents: number
+  filePath: string | null // Changed from string | undefined to string | null
+  imagePath: string
+  description: string | null // Changed from string | undefined to string | null
+  isAvailableForPurchase: boolean
+  createdAt: Date
+  updatedAt: Date
+  countInStock: number
+  qty: number
+}
 
 export function ProductForm({ product }: { product?: Product | null }) {
   const [error, action] = useFormState(

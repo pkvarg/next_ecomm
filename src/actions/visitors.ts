@@ -6,7 +6,7 @@ export async function updateVisitors() {
   console.log('here')
   const visitor = await db.visitorsCount.findUnique({
     where: {
-      id: 'e54f0eb9-79ec-4359-820a-7df4c5f6906e',
+      id: '6830d9ff8e1d4d4b5b461e2b',
     },
   })
 

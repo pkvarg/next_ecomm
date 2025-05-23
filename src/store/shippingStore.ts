@@ -1,8 +1,22 @@
-import { Product } from '@prisma/client'
+//import { Product } from '@prisma/client'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 // TODO PUT TO PRISMA and call it as here
+
+interface Product {
+  id: string
+  name: string
+  priceInCents: number
+  filePath: string | null // Changed from string | undefined to string | null
+  imagePath: string
+  description: string | null // Changed from string | undefined to string | null
+  isAvailableForPurchase: boolean
+  createdAt: Date
+  updatedAt: Date
+  countInStock: number
+  qty: number
+}
 
 interface ShippingInfo {
   name: string
