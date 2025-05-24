@@ -1,5 +1,5 @@
 'use client'
-import { contactEmail } from '@/actions/sendEmail'
+import { sendMail } from '@/actions/sendEmail'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -9,7 +9,7 @@ const Contact = () => {
     name: '',
     email: '',
     phone: '',
-    message: '',
+    mailMessage: '',
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -25,6 +25,39 @@ const Contact = () => {
   const [passwordGroupTwo, setPasswordGroupTwo] = useState(y)
   const [warning, setWarning] = useState('')
 
+  const increaseBots = async () => {
+    const apiUrl = 'https://hono-api.pictusweb.com/api/bots/nextecommerce/increase'
+    //const apiUrl = 'http://localhost:3013/api/bots/nextecommerce/increase'
+    try {
+      await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      //console.log('data bots', data)
+    } catch (error) {
+      console.error('Error increasing bots:', error)
+    }
+  }
+
+  const increaseEmails = async () => {
+    const apiUrl = 'https://hono-api.pictusweb.com/api/emails/nextecommerce/increase'
+    //const apiUrl = 'http://localhost:3013/api/emails/nextecommerce/increase'
+    try {
+      await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      //console.log('data email', data)
+    } catch (error) {
+      console.error('Error increasing emails:', error)
+    }
+  }
+
   const onSubmit = async (data: object) => {
     setWarning('')
     if (!agree) {
@@ -34,6 +67,7 @@ const Contact = () => {
 
     if (passwordGroupOne !== x || passwordGroupTwo !== y) {
       setWarning('Contact error')
+      increaseBots()
 
       const element = document.getElementById('contact')
       element?.scrollIntoView({ behavior: 'smooth' })
@@ -43,7 +77,7 @@ const Contact = () => {
     setWarning('')
 
     try {
-      const response = await contactEmail(formData)
+      const response = await sendMail(formData)
       console.log('ok', response)
 
       const element = document.getElementById('contact')
@@ -54,8 +88,9 @@ const Contact = () => {
         name: '',
         email: '',
         phone: '',
-        message: '',
+        mailMessage: '',
       })
+      increaseEmails()
     } catch (error) {
       console.error('Failed to send contact email:', error)
       setWarning('Failed to send contact email. Please try again later.')
@@ -106,9 +141,9 @@ const Contact = () => {
           onChange={handleInputChange}
         />
         <textarea
-          {...register('message')}
+          {...register('mailMessage')}
           placeholder="Your Message"
-          value={formData.message}
+          value={formData.mailMessage}
           rows={10}
           required
           className="border pl-1"

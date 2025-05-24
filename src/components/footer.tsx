@@ -9,6 +9,25 @@ const Footer = () => {
     await updateVisitors()
   }
 
+  const apiUrl = 'https://hono-api.pictusweb.com/api/visitors/nextecommerce/increase'
+  //const apiUrl = 'http://localhost:3013/api/visitors/nextecommerce/increase'
+
+  const incrementCount = async () => {
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      if (!response.ok) {
+        throw new Error('Failed to increment count')
+      }
+    } catch (err) {
+      console.log(err instanceof Error ? err.message : 'An unknown error occurred')
+    }
+  }
+
   return (
     <div className="bg-black flex flex-col px-[10%] gap-3 py-4">
       <CookieConsent
@@ -33,6 +52,7 @@ const Footer = () => {
         enableDeclineButton
         onDecline={() => {
           increaseVisitors()
+          incrementCount()
         }}
         declineButtonStyle={{
           background: 'red',
@@ -44,6 +64,7 @@ const Footer = () => {
         declineButtonText={'I disagree'}
         onAccept={() => {
           increaseVisitors()
+          incrementCount()
         }}
       >
         {
