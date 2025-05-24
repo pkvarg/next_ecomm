@@ -75,26 +75,26 @@ export async function sendMail(options: SendMailOptions) {
       body: JSON.stringify(sendData),
     })
 
-    // Check if request was successful
-    // if (!response.ok) {
-    //   const errorData = await response.json()
-    //   return {
-    //     success: false,
-    //     message: errorData.message || 'Failed to submit form',
-    //   }
-    // }
+    //Check if request was successful
+    if (!response.ok) {
+      const errorData = await response.json()
+      return {
+        success: false,
+        message: errorData.message || 'Failed to submit form',
+      }
+    }
 
-    // // Return success response
-    // const data = await response.json()
-    // //console.log('returned data', data)
+    // Return success response
+    const data = await response.json()
+    //console.log('returned data', data)
 
-    // return {
-    //   success: true,
-    //   message: data.message || 'Message sent successfully',
-    // }
-    const { status } = await response.json()
+    return {
+      success: true,
+      message: data.message || 'Message sent successfully',
+    }
+    // const { status } = await response.json()
 
-    if (status) return status
+    // if (status) return status
   } catch (error) {
     // Handle validation errors
     if (error) {

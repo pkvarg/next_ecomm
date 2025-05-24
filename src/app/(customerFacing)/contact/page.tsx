@@ -82,7 +82,7 @@ const Contact = () => {
 
       const element = document.getElementById('contact')
       element?.scrollIntoView({ behavior: 'smooth' })
-      setWarning(response)
+      setWarning(response.message)
       setAgree(false)
       setFormData({
         name: '',
