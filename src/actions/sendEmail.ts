@@ -12,6 +12,8 @@ interface SendMailOptions {
   mailMessage: string
 }
 
+const origin = 'NEXTECOMMERCE'
+
 const EmailSchema = z.object({
   name: z.string(),
   email: z.string(),
@@ -19,33 +21,10 @@ const EmailSchema = z.object({
   message: z.string(),
 })
 
-// export async function contactEmail(email: unknown) {
-//   EmailSchema.safeParse(email)
-
-//   const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
-//     //'http://localhost:3011/email/next_eshop/mailer', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify({
-//       order: [],
-//       origin: process.env.NEXT_ORIGIN,
-//       pdf: '',
-//       email: email,
-//       action: 'newContact',
-//     }),
-//   })
-
-//   const { status } = await response.json()
-
-//   if (status) return status
-// }
-
 export async function sendMail(options: SendMailOptions) {
   //const locale = await getLocale()
   const locale = 'en'
-  const origin = 'NEXTECOMMERCE'
+
   const subjectTranslations = {
     en: 'Message from nextecommerce',
     sk: 'Správa z nextecommerce',
@@ -123,21 +102,27 @@ export async function sendOrderWithPdf(order: Order, pdfBase64: string) {
       return { error: 'Email or PDF is missing' }
     }
 
+    const apiUrl = 'http://localhost:3013/api/nextecommerce/order'
+    //const apiUrl = 'https://hono-api.pictusweb.com/api/nextecommerce/order'
+
     // Make the API call using fetch
-    const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
-      //'http://localhost:3011/email/next_eshop/mailer', {
+    const response = await fetch(apiUrl, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         order,
-        origin: process.env.NEXT_ORIGIN,
+        origin: origin,
         pdf: pdfBase64,
-        email: '',
+        email: order.userEmail,
         action: 'newOrder',
       }),
     })
+
+    console.log('***RES', response)
+
+    return
 
     // Check if the response was successful
     if (!response.ok) {
@@ -165,15 +150,17 @@ export async function lowProductCount(product: string, name: string, newQty: str
   if (!isAuthenticated) return
   try {
     // Make the API call using fetch
-    const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
-      //'http://localhost:3011/email/next_eshop/mailer', {
+    const apiUrl = 'http://localhost:3013/api/nextecommerce/order'
+    //const apiUrl = 'https://hono-api.pictusweb.com/api/nextecommerce/order'
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         order: [],
-        origin: process.env.NEXT_ORIGIN,
+        origin: origin,
         pdf: newQty, // to reuse eshopMailer function on server
         email: product + '  ' + name, // to reuse eshopMailer function on server
         action: 'lowProductCount',
@@ -193,15 +180,16 @@ export async function orderPaidByStripe(order: Order) {
   if (!isAuthenticated) return
   try {
     // Make the API call using fetch
-    const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
-      //'http://localhost:3011/email/next_eshop/mailer', {
+    const apiUrl = 'http://localhost:3013/api/nextecommerce/order'
+    //const apiUrl = 'https://hono-api.pictusweb.com/api/nextecommerce/order'
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         order,
-        origin: process.env.NEXT_ORIGIN,
+        origin: origin,
         pdf: '',
         email: '',
         action: 'paidByStripe',
@@ -222,13 +210,16 @@ export async function orderStripeError(product: string, name: string, newQty: st
   if (!isAuthenticated) return
 }
 
-// not yet
+// not yet TODO
 export async function orderPackedAndSent(order: Order) {
   const isAuthenticated = await isAuth()
   if (!isAuthenticated) return
 
   try {
     // Make the API call using fetch
+    const apiUrl = 'http://localhost:3013/api/nextecommerce/order'
+    //const apiUrl = 'https://hono-api.pictusweb.com/api/nextecommerce/order'
+
     const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
       //'http://localhost:3011/email/next_eshop/mailer', {
       method: 'POST',

@@ -67,7 +67,12 @@ export function ProductCard(product: any) {
       </CardContent>
 
       <CardFooter>
-        <Button asChild size="lg" className="w-full" onClick={() => addToCart(product, count)}>
+        <Button
+          asChild
+          size="lg"
+          className="w-full cursor-pointer"
+          onClick={() => addToCart(product, count)}
+        >
           {/* <Link href={`/products/${id}/purchase`}>Purchase</Link> */}
           <p>Add to Cart</p>
         </Button>
