@@ -2,6 +2,8 @@
 import db from '@/db/db'
 import { clerkClient } from '@clerk/nextjs/server'
 
+const origin = 'NEXTECOMMERCE'
+
 export const getUserEmail = async (id: string) => {
   const client = await clerkClient()
 
@@ -29,21 +31,23 @@ export const logUser = async (email: string) => {
     })
     // send notif to admin
     try {
-      const response = await fetch('https://tss.pictusweb.com/email/next_eshop/mailer', {
-        //'http://localhost:3011/email/next_eshop/mailer', {
+      //const apiUrl = 'http://localhost:3013/api/nextecommerce/order'
+      const apiUrl = 'https://hono-api.pictusweb.com/api/nextecommerce/order'
+
+      const response = await fetch(apiUrl, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           order: [],
-          origin: process.env.NEXT_ORIGIN,
+          origin: origin,
           pdf: '',
           email,
           action: 'newUser',
         }),
       })
-      console.log('notif sent', response)
+      console.log('**LOG USER notif sent', response)
     } catch (err) {
       console.log('err admin notif email', err)
     }

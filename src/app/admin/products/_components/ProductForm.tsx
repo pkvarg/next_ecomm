@@ -33,6 +33,8 @@ export function ProductForm({ product }: { product?: Product | null }) {
     {},
   )
 
+  //console.log('err act', error, action)
+
   const [priceInCents, setPriceInCents] = useState<number | undefined>(product?.priceInCents)
   const [countInStock, setCountInStock] = useState<number | undefined>(product?.countInStock!)
 

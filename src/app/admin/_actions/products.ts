@@ -75,19 +75,48 @@ export async function addProduct(prevState: unknown, formData: FormData) {
   redirect('/admin/products')
 }
 
-const editSchema = addSchema.extend({
-  // file: fileSchema.optional(),
-  // image: imageSchema.optional(),
-  image: z.string().url(), // Accept URL instead of File
-  file: z.string().optional(), // Optional for files
+// const editSchema = addSchema.extend({
+//   // file: fileSchema.optional(),
+//   // image: imageSchema.optional(),
+//   image: z.string().url(), // Accept URL instead of File
+//   file: z.string().optional(), // Optional for files
+// })
+
+const editSchema = z.object({
+  name: z.string().min(1),
+  priceInCents: z.number().int().positive(),
+  description: z.string().min(1),
+  countInStock: z.number().int().min(0),
+  image: z.string().optional(), // Make optional for updates
+  file: z.string().optional(),
 })
 
 export async function updateProduct(id: string, prevState: unknown, formData: FormData) {
   const isAuthenticated = await isAuthAdmin()
   if (!isAuthenticated) return
-  const result = editSchema.safeParse(Object.fromEntries(formData.entries()))
+
+  // Extract values directly from FormData and convert types
+  const processedData = {
+    name: formData.get('name') as string,
+    priceInCents: Number(formData.get('priceInCents')),
+    description: formData.get('description') as string,
+    countInStock: Number(formData.get('countInStock')),
+    image: formData.get('image') as string | null,
+    file: formData.get('file') as string | null,
+  }
+
+  // Remove null/empty values (MongoDB doesn't like them)
+  const cleanedData = Object.fromEntries(
+    Object.entries(processedData).filter(
+      ([_, value]) => value !== null && value !== undefined && value !== '',
+    ),
+  )
+
+  const result = editSchema.safeParse(cleanedData)
   console.log('update res', result)
+
   if (result.success === false) {
+    console.log('Validation errors:', result.error.formErrors.fieldErrors)
     return result.error.formErrors.fieldErrors
   }
 
@@ -108,28 +137,6 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
   if (data.image != null) {
     imagePath = `${data.image}`
   }
-
-  // CLOUDINARY
-
-  // let filePath = product.filePath
-  // if (data.file != null && data.file.size > 0 && product.filePath) {
-  //   await fs.unlink(product.filePath)
-  //   filePath = `products/${crypto.randomUUID()}-${data.file.name}`
-  //   // await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()))
-  //   await fs.writeFile(filePath, new Uint8Array(Buffer.from(await data.file.arrayBuffer())))
-  // }
-
-  // let imagePath = product.imagePath
-
-  // if (data.image != null && data.image.size > 0) {
-  //   await fs.unlink(`public${product.imagePath}`)
-  //   imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`
-  //   // await fs.writeFile(`public${imagePath}`, Buffer.from(await data.image.arrayBuffer()))
-  //   await fs.writeFile(
-  //     `public${imagePath}`,
-  //     new Uint8Array(Buffer.from(await data.image.arrayBuffer())),
-  //   )
-  // }
 
   await db.product.update({
     where: { id },
